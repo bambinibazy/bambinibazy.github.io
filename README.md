@@ -1,3 +1,4 @@
+欢迎来到 小猪家园！
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/bambinibazy/bambinibazy.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
