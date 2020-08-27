@@ -1,1 +1,676 @@
-hello  
+
+<!DOCTYPE html>
+<!-- saved from url=(0019)https://purrli.com/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="https://report.niucodata.com/lay/assst/css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://report.niucodata.com/lay/assst/jquery-ui.css">
+	<link href="https://report.niucodata.com/lay/assst/main.css" rel="stylesheet" type="text/css">
+	<script src="https://report.niucodata.com/lay/assst/jquery.min.js"></script>
+	<script src="https://report.niucodata.com/lay/assst/jquery-ui.min.js"></script>
+	<script src="https://report.niucodata.com/lay/assst/jquery.ui.touch-punch.min.js"></script>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>这里有猫-听猫打呼噜</title>
+	<meta name="keywords" content="猫,猫呼噜,猫打呼噜">
+	<meta name="description" content="想象一下，有一只猫就躺在你旁边打呼噜">
+	<link rel="apple-touch-icon" sizes="180x180" href="https://img.niucodata.com/201707068088apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="https://img.niucodata.com/2017070674474favicon-32x32.png">
+	<meta name="theme-color" content="#ffffff">
+	
+	
+
+<body onload="init()">
+
+
+<!-- The overlay -->
+
+
+
+<div id="purrLayer" style="opacity: 0.7;"></div>
+<div id="opacityLayer"></div>
+
+<div class="tile1">
+		<div class="anchor" id="anchor_player"></div>
+		<div id="title">这里有猫 <img src="https://report.niucodata.com/lay/assst/purrliCat.png" width="32px"></div>
+		<div id="subtitle">在线听猫打呼噜(请戴耳机)</div>
+		
+		<div class="ctrSection">
+			<img src="https://report.niucodata.com/lay/assst/volDown.png" class="ctrlImg" onclick="volDown()" onmouseover="msg(&#39;降低音量&#39;)" alt="Volume Down">
+			<img id="levelBars" src="assst/level4.png" class="lvlImg" alt="Level Bars">
+			<img src="https://report.niucodata.com/lay/assst/volUp.png" class="ctrlImg" onclick="volUp()" onmouseover="msg(&#39;增高音量&#39;)" alt="Volume Up">
+			<img src="https://report.niucodata.com/lay/assst/mute.png" id="mute" class="ctrlImg" onclick="toggleMute()" onmouseover="msg(&#39;最后一两声，听完就停!&#39;)" alt="Mute" style="opacity: 1;">
+		</div>
+		
+		<center>
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">困倦</td><td align="right">开心</td></tr></tbody></table><div id="tempo" onmouseover="msg(&#39;设置频率&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+		</div>
+		
+		<!--
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">Steady</td><td align="right">Lively</td></tr></tbody></table><div id="variability" onmouseover="msg(&#39;Control the purr rate variability&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+		</div>
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">Purr Out</td><td align="right">Purr In</td></tr></tbody></table><div id="symmetry" onmouseover="msg(&#39;Change the relative loudness of the inhale and exhale&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+		</div>
+		-->
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">放松</td><td align="right">兴奋</td></tr></tbody></table><div id="size" onmouseover="msg(&#39;设置呼噜声调调&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+		</div>
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">离你近</td><td align="right">离你远</td></tr></tbody></table><div id="filter" onmouseover="msg(&#39;设置你和猫的距离&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
+		</div>
+		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">只是呼噜</td><td align="right">还有喵喵叫</td></tr></tbody></table><div id="meow" onmouseover="msg(&#39;你的猫喜欢喵喵叫吗?&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 25%;"></span></div>
+		</div>
+		
+		<div id="msg">调整呼噜声</div>
+		</center>
+
+</div>
+
+<div class="sectionBottomFollow">
+<img src="https://report.niucodata.com/lay/assst/cat5.png" width="46px" style="margin: 0 0 -15px 5px;opacity:0.9;">
+看呼噜来源本喵或者赞助我们:<a target="_blank" href="https://mianbaoduo.com/o/bread/YZabmJ8=">点这里可以看到猫猫本猫欧</a>
+</div>
+
+<div class="tile2">
+
+<p></p>
+<div class="anchor" id="anchor_foreword"></div>
+<div class="section">
+<h1><img src="https://report.niucodata.com/lay/assst/cat.png" width="48px" style="margin-bottom: -21px;opacity:0.9;"> Tips</h1>
+<p>如果听不到声音，请戴耳机，如果还是听不到，那么请换到一个网络好的地方，再等等看，如果还是听不到，那么你可以在微博上找我(<a href="http://weibo.com/u/2819201144/">@调皮的王登科</a>),看能不能把我家的真猫借给你听听</p>
+
+<p>呼噜声的背后是一笔由开发者默默承担的流量开支，通过下方的方式赞助(我保证不会用来偷偷买猫罐头)</p>
+<center>
+<span id="showpay">
+<a onclick="showpay()">查看赞助方式</a>
+</span>
+</center>
+
+
+<p>随时听呼噜</p>
+
+<p>
+本站来源于Dr. Ir. Stéphane Pigeon的网站「purrli」，因为国内需要扶墙才能访问且只有英语，我把它移植到国内来了，删减了很多冗余部分，保留了最极致精简的呼噜选项。本站遵循了Dr. Ir. Stéphane 的使用协议，希望国内的猫奴们玩的愉快
+</p>
+</div>
+
+
+
+
+<div class="sectionLast">
+<p><em>不可用于商业用途</em>
+<br>
+<br>
+© 2017-<a href="http://www.wdk.pw">DK</a> & <a href="http://www.stephanepigeon.com/">Dr. Ir. Stéphane Pigeon</a></p>
+</div>
+
+</div>
+
+
+
+<script>
+
+// params
+var sessName="";
+var PPM=30;
+var PPMIN=20;
+var PPMAX=80;
+var INFILE,EXFILE,TIN,PIN,PEX,INENVL,INENVT,EXENVL,EXENVT,BASETONE;
+var TONE=1;
+var STRETCH=1;
+var SYMMETRY=0;
+var RANDOMNESS=0;
+var VARIABILITY=0.5;
+var MEOW=0.09;
+var VOL=4;
+var T;
+
+var inSound,exSound;
+var purrCycle=0;
+var globalR;
+var bWEBAUDIO=0;
+var bIOS=0;
+var bMUTE=0;
+var globalLevel=VOL/5;
+var fileExt;
+var path='https://img.niucodata.com/';
+var refTimeIn;
+var audioTimer;
+var mSprites=new Array();
+var bTimeToMeow;
+
+// WEBAUDIO LOADER
+var  context;
+var  inEnv, exEnv, inGain, exGain, meowGain, masterGain;
+var  sound = new Array();
+var  bufferList;
+var  bufferLoader;
+
+function BufferLoader(context, urlList, callback) {
+    this.context = context;
+    this.urlList = urlList;
+    this.onload = callback;
+    this.bufferSubList = new Array();
+    this.loadCount = 0;
+}
+
+BufferLoader.prototype.loadBuffer = function(url, index) {
+    // Load buffer asynchronously
+    
+    var request = new XMLHttpRequest();
+
+    request.open("GET", url, true);
+    request.responseType = "arraybuffer";
+    
+    var loader = this;
+
+    request.onload = function() {
+        // Asynchronously decode the audio file data in request.response
+        loader.context.decodeAudioData(
+            request.response,
+            function(buffer) {
+                if (!buffer) {
+                    alert('error decoding file data: ' + url);
+                    return;
+                }
+                loader.bufferSubList[index] = buffer;
+                if (++loader.loadCount == loader.urlList.length)
+                    loader.onload(loader.bufferSubList);
+            }    
+        );
+    }
+    request.onerror = function() {}
+    request.send();
+}
+
+BufferLoader.prototype.load = function(channel) {
+    for (var i = 0; i < this.urlList.length; ++i)
+        this.loadBuffer(this.urlList[i],i);
+}
+
+
+
+function init() {
+
+// Checking browser compatibility
+	 
+	var a = document.createElement('audio');
+	fileExt=".mp3";
+	if (!!(a.canPlayType && a.canPlayType('audio/mp4;').replace(/no/, ''))){fileExt=".m4a";};
+	if (!!(a.canPlayType && a.canPlayType('audio/ogg;').replace(/no/, ''))){fileExt=".ogg";};
+	console.log(fileExt+' selected as preferred audio file format');
+	bIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? 1 : 0 );
+	
+	if(typeof webkitAudioContext !== "undefined") bWEBAUDIO=1;
+	if(typeof AudioContext !== "undefined") bWEBAUDIO=1;
+	if (bIOS) bWEBAUDIO=1;
+	
+	if (bWEBAUDIO) {
+		if (typeof AudioContext !== 'undefined') context= new AudioContext();
+		else context = new webkitAudioContext();
+		
+		inEnv = context.createGain();
+		exEnv = context.createGain();
+		inGain = context.createGain();
+		exGain = context.createGain();
+		meowGain = context.createGain();
+		masterGain = context.createGain();
+		
+		masterGain.gain.setValueAtTime(Math.pow(globalLevel,2),context.currentTime);
+		inEnv.gain.setValueAtTime(0,context.currentTime);		
+		exEnv.gain.setValueAtTime(0,context.currentTime);
+		inGain.gain.value=1;		
+		exGain.gain.value=1;
+		meowGain.gain.value=0.5;
+		
+		filter=context.createBiquadFilter();
+		filter.type="lowshelf";
+		filter.frequency.value=80;
+		filter.Q.value=1;
+		filter.gain.value=-18;
+		filter.connect(context.destination);
+		
+		meowGain.connect(masterGain);
+		masterGain.connect(filter);
+		exEnv.connect(exGain);
+		inEnv.connect(inGain);
+		exGain.connect(masterGain);
+		inGain.connect(masterGain);
+	}
+	else alert('浏览器版本过低，网站不能正常运行');
+
+
+	// OK - build UI
+	
+  // add touchstart listener to force play on iOS
+	if (bIOS==1) {
+		$("#radioTouch").css("display","block");
+		window.addEventListener('touchstart', function() {
+			// create empty buffer
+			var buffer = context.createBuffer(1, 1, 22050);
+			var source = context.createBufferSource();
+			source.buffer = buffer;
+			// connect to output (your speakers)
+			source.connect(context.destination);
+			// play the file
+			source.start(0);
+			$("#radioTouch").css("display","none")
+		}, false);
+	}
+	
+	setParam('default');
+	buildUI();
+	
+	timeOut=performance.now();
+	loadSoundSetAndPlay();
+	
+	
+	// $('.pTn').powerTip({placement: 'n'});
+
+}
+
+function setParam(name){
+	sessName=name;
+	switch(sessName) {
+		case "default":
+			INFILE=name+"_e";EXFILE=name+"_i";MFILE=name+"_m";
+			mSprites=[0,0.8,1.2,2.5,3.5,4.4,5.5,6.3,7.1,7.8,8.6,9.7,10.6,11.6,12.6,13.7,15.1,16.3,17.4,18.6,19.3];
+			PPM=35;TIN=0.5;PIN=0.03;PEX=0.03;
+			BASETONE=1.05;
+			INENVL=[0,		0.2,	0.8,		0.8, 		0];
+			INENVT=[0,		0.2,	0.5,		1,		1.35];
+			EXENVL=[0.8,	0.8,	0];
+			EXENVT=[0.1,	1,		1.45];
+			break;
+	}
+}
+
+function buildUI(){
+      $("#volIco").html("<img src='./Pix/slider_vol-.png' class='sliderIcon pTn' alt='Volume' title='Volume Down' onclick='$(\"#volume\").slider(\"value\",$(\"#volume\").slider(\"option\",\"value\")-10);'>");
+      $("#volIcoR").html("<img src='./Pix/slider_vol+.png' class='sliderIcon pTn' alt='Volume' title='Volume Up' onclick='$(\"#volume\").slider(\"value\",$(\"#volume\").slider(\"option\",\"value\")+10);'>");
+      	$(function(){$("#tempo").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        value: Math.pow((PPM-PPMIN)/(PPMAX-PPMIN),0.5),
+        step:0.01,
+        slide: function(e, ui) {
+          setPPM(ui.value);
+        },
+        change: function(e, ui) {
+          setPPM(ui.value);
+        }
+      });} );
+      $(function(){$("#size").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        step:0.01,
+        value: 0.5,
+        slide: function(e, ui) {
+          setTone(ui.value);
+        },
+        change: function(e, ui) {
+          setTone(ui.value);
+        }
+      });} );
+      $(function(){$("#symmetry").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        step:0.01,
+        value:0.5,
+        slide: function(e, ui) {
+          setSymmetry(ui.value);
+        },
+        change: function(e, ui) {
+          setSymmetry(ui.value);
+        }
+      });} );
+     $(function(){$("#variability").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        step:0.01,
+        value:0.5,
+        value: VARIABILITY,
+        slide: function(e, ui) {
+          setVariability(ui.value);
+        },
+        change: function(e, ui) {
+          setVariability(ui.value);
+        }
+      });} );
+      $(function(){$("#filter").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        step:0.01,
+        value: 0.5,
+        slide: function(e, ui) {
+          setFilter(ui.value);
+        },
+        change: function(e, ui) {
+          setFilter(ui.value);
+        }
+      });} );
+      $(function(){$("#meow").slider({
+        animate: "slow",
+        min: 0,
+        max: 1,
+        step:0.01,
+        value: 0.25,
+        slide: function(e, ui) {
+          setMeow(ui.value);
+        },
+        change: function(e, ui) {
+          setMeow(ui.value);
+        }
+      });} );
+}
+
+function volUp(){
+	if (bMUTE) toggleMute();
+	else {
+	if (++VOL==6) VOL=5;
+	globalLevel=VOL/5;
+	masterGain.gain.cancelScheduledValues(context.currentTime);
+	masterGain.gain.setValueAtTime(masterGain.gain.value,context.currentTime);
+	masterGain.gain.linearRampToValueAtTime(Math.pow(globalLevel,2),context.currentTime+0.2);
+	$('#levelBars').attr("src","./Pix/level"+VOL+".png");
+	}
+}
+
+function volDown(){
+	if (bMUTE) toggleMute();
+	else {
+	if (--VOL==-1) VOL=0;
+	globalLevel=VOL/5;
+	masterGain.gain.cancelScheduledValues(context.currentTime);
+	masterGain.gain.setValueAtTime(masterGain.gain.value,context.currentTime);
+	masterGain.gain.linearRampToValueAtTime(Math.pow(globalLevel,2),context.currentTime+0.2);
+	$('#levelBars').attr("src","./Pix/level"+VOL+".png");
+	}
+}
+
+function toggleMute(){
+	bMUTE=1-bMUTE;
+	if (bMUTE==0) {
+		purrIn();
+		$('#mute').css('opacity', '0.5');
+	}
+	else {
+		$('#mute').css('opacity', '1');
+	}
+}
+
+function setPPM(value){
+	PPM=Math.round((PPMIN+Math.pow(value,2)*(PPMAX-PPMIN))*10)/10;
+	purrCycle=0;
+	msg(PPM+' 次呼噜／分钟');
+}
+
+function setTone(value){
+	TONE = (0.92+value/8)*BASETONE;
+	msg(Math.round(value*100)+'%');
+}
+
+function setVariability(value){
+	VARIABILITY = value;
+	msg(Math.round(value*100)+'%');
+}
+
+
+function setFilter(value){
+	filter.frequency.value=Math.round((20+Math.pow(value,2)*(200-20))*10)/10;
+	meowGain.gain.value=0.5+(1-value)/3;
+	msg(Math.round(value*100)+'%');
+}
+
+function setSymmetry(value){
+	SYMMETRY=-1+2*value;
+	if (SYMMETRY>0) {
+		exGain.gain.value=1-0.7*SYMMETRY;
+		inGain.gain.value=1;
+	}
+	else
+	{
+		exGain.gain.value=1;
+		inGain.gain.value=1+0.7*SYMMETRY;
+	}
+	msg(Math.round(SYMMETRY*100)+'%');
+}
+
+function setMeow(value){
+	var MPM;
+	MEOW = value*value;
+	MPM=MEOW*4;
+	if (MPM>1) msg(Math.round(value*100)+'% • 周围 '+Math.round(MPM)+' 次喵喵叫／分钟');
+	if (MPM<1) msg(Math.round(value*100)+'% • 周围每 '+Math.round(1/MPM)+' 分钟一次喵喵叫');
+	if (MEOW==0) msg(Math.round(value*100)+'% • 净呼噜声...');
+}
+
+function loadSoundSetAndPlay(){
+	bufferLoader = new BufferLoader(
+		context,
+		[
+		  path+INFILE+fileExt,
+		  path+EXFILE+fileExt,
+		  path+MFILE+fileExt,
+		  path+"5s"+fileExt,
+		],
+		finishedLoading
+		);
+	bufferLoader.load();
+}
+
+function finishedLoading(bf) { // bf given by  loader.onload;
+
+	bufferList=bf;
+
+	inSound = context.createBufferSource();
+	inSound.buffer = bufferList[0];
+	inSound.connect(inEnv);
+	inSound.loop=1;
+	inSound.start(0,0);
+	
+	exSound = context.createBufferSource();
+	exSound.buffer = bufferList[1];
+	exSound.connect(exEnv);
+	exSound.loop=1;
+	exSound.start(0,0);
+	
+	purrIn();
+
+	// fadeIn(name,level,1);
+}
+
+function ran(min,max){
+	return (min+Math.random()*(max-min));
+}
+
+function purrIn() {
+
+	var dla=performance.now()-refTimeIn;
+	// if dla > 100ms... we have a problem (power saving)
+	
+	bTimeToMeow=0;
+	var draw;
+	if (MEOW>0) {
+		draw=Math.floor(ran(0,PPM/MEOW/4));
+		if (draw==0) bTimeToMeow=1;
+		}
+
+	globalR=ran(0.9,1.1);
+	if (purrCycle==0) {
+		if (ran(0,1)<VARIABILITY) {
+			purrCycle=Math.floor(ran(0,4));
+			T=60/ran(Math.max(PPM/2,PPMIN),Math.min(PPM*3,PPMAX));
+		}
+		else T=60/PPM*globalR;
+	}
+	else {
+		purrCycle--;
+	}
+	
+	var tIN=TIN*globalR;
+	var pIN=PIN+ran(0,0.05);
+	var inEnvL=[];
+	var inEnvT=[];
+	var r=ran(0.85,1.0);
+	for (var k=0;k<INENVL.length;k++) {
+		inEnvL[k]=INENVL[k]*ran(0.85,1.0);
+		inEnvT[k]=INENVT[k]*r;
+	}
+	
+	inSound.playbackRate.value = TONE+ran(-0.03,0.03);
+	
+	var now=context.currentTime;
+	
+	inEnv.gain.linearRampToValueAtTime(0,now);
+	for (var k=0;k<inEnvL.length;k++) inEnv.gain.linearRampToValueAtTime(inEnvL[k],now+T*tIN*inEnvT[k]);
+
+  	audioTimer = context.createBufferSource();
+	audioTimer.buffer = bufferList[3];
+	audioTimer.connect(masterGain);
+	if (bMUTE==0) {
+		if (bTimeToMeow==1) audioTimer.onended=function(){meow();purrOut();};
+		else audioTimer.onended=function(){purrOut();};
+	}
+  	audioTimer.start(0,0,T*(tIN+pIN));
+	$( "#purrLayer" ).fadeTo(T*(tIN+pIN)*900,0.7);
+}
+
+function purrOut() {
+
+	var tIN=TIN*globalR;
+	var pIN=PIN*ran(0,1);
+	var pEX=PEX*ran(0,1);
+	var tEX=(1-tIN-pIN-pEX);
+	var exEnvL=[];
+	var exEnvT=[];
+	var r=ran(0.85,1.0);
+	for (var k=0;k<EXENVL.length;k++) {
+		exEnvL[k]=EXENVL[k]*ran(0.85,1.0)*(1-0.9*bTimeToMeow);
+		exEnvT[k]=EXENVT[k]*r*(1+0.5*bTimeToMeow);
+	}
+	
+	exSound.playbackRate.value = TONE+ran(-0.03,0.03);
+	
+	var now=context.currentTime;
+	
+	exEnv.gain.linearRampToValueAtTime(0,now);
+	for (var k=0;k<exEnvL.length;k++) exEnv.gain.linearRampToValueAtTime(exEnvL[k],now+T*tEX*exEnvT[k]);
+	
+	refTimeIn=performance.now()+T*(tEX+pEX)*1000;
+	
+	audioTimer = context.createBufferSource();
+	audioTimer.buffer = bufferList[3];
+	audioTimer.connect(masterGain);
+	if (bMUTE==0) { 
+		audioTimer.onended=function(){purrIn();};
+		}
+  	audioTimer.start(0,0,T*(tEX+pEX));
+  	$( "#purrLayer" ).fadeTo(T*(tEX+pEX)*900,0);
+}
+
+function meow(){
+	var meowSound = context.createBufferSource();
+	//meowSound.onended=function(){purrIn();};
+	meowSound.buffer = bufferList[2];
+	meowSound.playbackRate.value=0.85+ran(0,0.3);
+	// if (ran(0,1)>0.6) meowSound.onended=function(){meow();};
+	meowSound.connect(meowGain);
+	var pos=Math.floor(ran(0,mSprites.length-1));
+	meowSound.start(context.currentTime,mSprites[pos],mSprites[pos+1]-mSprites[pos]);
+}
+
+
+function msg(msg){
+		$("#msg").html(msg);
+}
+
+</script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+function updateProgress(sMsg) 
+    {  
+        document.getElementById("show").innerHTML = sMsg; 
+    }
+
+  /*
+   * 注意：
+   * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
+   * 2. 如果发现在 Android 不能分享自定义内容，请到官网下载最新的包覆盖安装，Android 自定义分享接口需升级至 6.0.2.58 版本及以上。
+   * 3. 常见问题及完整 JS-SDK 文档地址：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
+   *
+   * 开发中遇到问题详见文档“附录5-常见错误及解决办法”解决，如仍未能解决可通过以下渠道反馈：
+   * 邮箱地址：weixin-open@qq.com
+   * 邮件主题：【微信JS-SDK反馈】具体问题
+   * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
+   */
+  wx.config({
+    debug: false,
+    appId: 'wx0945d58073ddc9ee',
+    timestamp: 1598519638,
+    nonceStr: 'lItgy8Y0PwIdYRH0',
+    signature: '962a13fcd0f1fa3a5c4517aa75fe0c47c899be3f',
+    jsApiList: [
+    'onMenuShareTimeline',
+    'hideMenuItems',
+    'onMenuShareAppMessage'
+      // 所有要调用的 API 都要加到这个列表中
+    ]
+  });
+  wx.error(function(res){
+
+    // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+
+});
+
+  wx.ready(function () {
+    // 在这里调用 API
+    wx.onMenuShareTimeline({
+    title: '在线听猫打呼噜', // 分享标题
+    link: 'https://m.niucodata.com/cat/cat.php', // 分享链接
+    imgUrl: 'https://img.niucodata.com/2017070654678fgr3g3tgr.png', // 分享图标
+    success: function () { 
+        
+    },
+    cancel: function () { 
+        
+    }
+});
+    wx.onMenuShareAppMessage({
+    title: '在线听猫打呼噜', // 分享标题
+    desc: '你的手机里原来住着一只猫', // 分享描述
+    link: 'https://m.niucodata.com/cat/cat.php', // 分享链接
+    imgUrl: 'https://img.niucodata.com/2017070654678fgr3g3tgr.png', // 分享图标
+    type: '', // 分享类型,music、video或link，不填默认为link
+    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+    success: function () { 
+        // 用户确认分享后执行的回调函数
+    },
+    cancel: function () { 
+        // 用户取消分享后执行的回调函数
+    }
+});
+
+    wx.hideMenuItems({
+    menuList: ['menuItem:copyUr'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+    });
+
+
+
+  });
+function showpay(){
+	document.getElementById('showpay').innerHTML = '支付宝:18981932715<br>微信：关注下方的公众号，点进近期的文章，拉到底部即可赞赏了～'
+}
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49134421-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
