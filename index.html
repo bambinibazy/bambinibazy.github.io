@@ -1,676 +1,1678 @@
-
 <!DOCTYPE html>
-<!-- saved from url=(0019)https://purrli.com/ -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="https://report.niucodata.com/lay/assst/css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="https://report.niucodata.com/lay/assst/jquery-ui.css">
-	<link href="https://report.niucodata.com/lay/assst/main.css" rel="stylesheet" type="text/css">
-	<script src="https://report.niucodata.com/lay/assst/jquery.min.js"></script>
-	<script src="https://report.niucodata.com/lay/assst/jquery-ui.min.js"></script>
-	<script src="https://report.niucodata.com/lay/assst/jquery.ui.touch-punch.min.js"></script>
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>这里有猫-听猫打呼噜</title>
-	<meta name="keywords" content="猫,猫呼噜,猫打呼噜">
-	<meta name="description" content="想象一下，有一只猫就躺在你旁边打呼噜">
-	<link rel="apple-touch-icon" sizes="180x180" href="https://img.niucodata.com/201707068088apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="https://img.niucodata.com/2017070674474favicon-32x32.png">
-	<meta name="theme-color" content="#ffffff">
-	
-	
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>维修工单智能派工系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#722ED1',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        info: '#86909C',
+                        light: '#F2F3F5',
+                        dark: '#1D2129',
+                        'primary-light': '#E8F3FF',
+                        'secondary-light': '#F3E8FF',
+                        'success-light': '#E8FFF3',
+                        'warning-light': '#FFF7E8',
+                        'danger-light': '#FFECE8',
+                        'gradient-start': '#667eea',
+                        'gradient-end': '#764ba2',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+                        'card-hover': '0 12px 40px rgba(0, 0, 0, 0.15)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+                        'neon': '0 0 20px rgba(22, 93, 255, 0.5)',
+                    },
+                    backdropBlur: {
+                        'glass': '15px',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate',
+                        'slide-up': 'slide-up 0.5s ease-out',
+                        'slide-down': 'slide-down 0.5s ease-out',
+                        'bounce-in': 'bounce-in 0.6s ease-out',
+                        'shimmer': 'shimmer 2s infinite linear',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        'pulse-glow': {
+                            '0%': { boxShadow: '0 0 20px rgba(22, 93, 255, 0.3)' },
+                            '100%': { boxShadow: '0 0 30px rgba(22, 93, 255, 0.6)' }
+                        },
+                        'slide-up': {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        'slide-down': {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        'bounce-in': {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        }
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .shimmer-effect {
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.4),
+                    transparent
+                );
+                background-size: 200% 100%;
+            }
+            .neon-border {
+                border: 2px solid transparent;
+                background: linear-gradient(white, white) padding-box,
+                           linear-gradient(45deg, #165DFF, #722ED1) border-box;
+            }
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .grid-auto-fit {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-dark">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-primary/5 to-secondary/5 rounded-full blur-3xl animate-pulse"></div>
+    </div>
 
-<body onload="init()">
+    <!-- 顶部导航栏 -->
+    <header class="glass-effect fixed top-0 left-0 right-0 z-50 transition-all duration-500 animate-slide-down" id="navbar">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="text-primary text-2xl animate-pulse-glow">
+                        <i class="fa fa-wrench"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                            维修工单智能派工系统
+                        </span>
+                        <div class="text-xs text-gray-500">Intelligent Repair Dispatch System</div>
+                    </div>
+                </div>
 
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="relative text-primary font-medium group">
+                        工作台
+                        <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform scale-x-100 transition-transform group-hover:scale-x-110"></span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-all duration-300 hover:scale-105 relative group">
+                        工单管理
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-all duration-300 hover:scale-105 relative group">
+                        人员管理
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-all duration-300 hover:scale-105 relative group">
+                        数据分析
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-primary transition-all duration-300 hover:scale-105 relative group">
+                        系统设置
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </div>
 
-<!-- The overlay -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="p-2 rounded-full hover:bg-white/20 transition-all duration-300 hover:scale-110 relative">
+                            <i class="fa fa-bell-o text-gray-600"></i>
+                            <span class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gradient-to-r from-danger to-warning text-white text-xs flex items-center justify-center animate-bounce">3</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-white/20 rounded-full px-3 py-1 backdrop-blur-sm">
+                        <img src="https://picsum.photos/id/1005/200/200" alt="用户头像" class="h-8 w-8 rounded-full object-cover ring-2 ring-primary/30 hover:ring-primary transition-all duration-300">
+                        <span class="hidden md:inline-block font-medium">管理员</span>
+                        <i class="fa fa-chevron-down text-xs text-gray-500 transition-transform hover:rotate-180 duration-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
 
+    <!-- 主内容区 -->
+    <main class="pt-20 min-h-screen relative z-10">
+        <div class="container mx-auto px-4 py-6">
+            <!-- 欢迎横幅 -->
+            <div class="mb-8 glass-effect rounded-2xl p-6 border border-white/20 animate-slide-up">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-2">
+                            <span class="wave">👋</span> 欢迎回来，管理员
+                        </h1>
+                        <p class="text-gray-600">今天是个美好的一天，让我们开始工作吧！</p>
+                        <div class="flex items-center mt-2 text-sm text-gray-500">
+                            <i class="fa fa-calendar mr-2"></i>
+                            <span id="currentDate"></span>
+                            <i class="fa fa-clock-o ml-4 mr-2"></i>
+                            <span id="currentTime"></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-primary">98.5%</div>
+                            <div class="text-xs text-gray-500">系统正常运行</div>
+                        </div>
+                        <div class="w-16 h-16 relative">
+                            <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                      fill="none" stroke="#e5e7eb" stroke-width="2"/>
+                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                      fill="none" stroke="#165DFF" stroke-width="2" stroke-dasharray="98.5, 100"
+                                      class="animate-pulse-glow"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fa fa-heart text-danger animate-pulse"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- 站点选择器 -->
+            <div class="mb-8 glass-effect rounded-2xl p-6 border border-white/20 animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                            <span class="text-gray-600 font-medium">当前站点:</span>
+                        </div>
+                        <div class="relative">
+                            <select id="siteSelector" class="appearance-none glass-effect border border-white/30 text-gray-900 text-sm rounded-xl block w-full pl-4 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300 hover:shadow-lg backdrop-blur-sm">
+                                <option value="all">🌐 全部站点</option>
+                                <option value="site1" selected>🏢 北京朝阳区站点</option>
+                                <option value="site2">🏙️ 上海浦东新区站点</option>
+                                <option value="site3">🌆 广州天河区站点</option>
+                                <option value="site4">🏗️ 深圳南山区站点</option>
+                                <option value="site5">🏛️ 成都高新区站点</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                <i class="fa fa-chevron-down text-xs transition-transform duration-300"></i>
+                            </div>
+                        </div>
+                    </div>
 
-<div id="purrLayer" style="opacity: 0.7;"></div>
-<div id="opacityLayer"></div>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="px-4 py-2 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl hover:from-primary/90 hover:to-primary/70 transition-all duration-300 flex items-center shadow-lg hover:shadow-xl hover:scale-105 transform">
+                            <i class="fa fa-refresh mr-2 animate-spin"></i> 刷新数据
+                        </button>
+                        <button class="px-4 py-2 glass-effect border border-white/30 text-gray-700 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center hover:scale-105 transform backdrop-blur-sm">
+                            <i class="fa fa-download mr-2"></i> 导出报表
+                        </button>
+                        <button class="px-4 py-2 glass-effect border border-white/30 text-gray-700 rounded-xl hover:bg-white/30 transition-all duration-300 flex items-center hover:scale-105 transform backdrop-blur-sm">
+                            <i class="fa fa-cog mr-2"></i> 筛选设置
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-<div class="tile1">
-		<div class="anchor" id="anchor_player"></div>
-		<div id="title">这里有猫 <img src="https://report.niucodata.com/lay/assst/purrliCat.png" width="32px"></div>
-		<div id="subtitle">在线听猫打呼噜(请戴耳机)</div>
-		
-		<div class="ctrSection">
-			<img src="https://report.niucodata.com/lay/assst/volDown.png" class="ctrlImg" onclick="volDown()" onmouseover="msg(&#39;降低音量&#39;)" alt="Volume Down">
-			<img id="levelBars" src="assst/level4.png" class="lvlImg" alt="Level Bars">
-			<img src="https://report.niucodata.com/lay/assst/volUp.png" class="ctrlImg" onclick="volUp()" onmouseover="msg(&#39;增高音量&#39;)" alt="Volume Up">
-			<img src="https://report.niucodata.com/lay/assst/mute.png" id="mute" class="ctrlImg" onclick="toggleMute()" onmouseover="msg(&#39;最后一两声，听完就停!&#39;)" alt="Mute" style="opacity: 1;">
-		</div>
-		
-		<center>
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">困倦</td><td align="right">开心</td></tr></tbody></table><div id="tempo" onmouseover="msg(&#39;设置频率&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
-		</div>
-		
-		<!--
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">Steady</td><td align="right">Lively</td></tr></tbody></table><div id="variability" onmouseover="msg(&#39;Control the purr rate variability&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
-		</div>
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">Purr Out</td><td align="right">Purr In</td></tr></tbody></table><div id="symmetry" onmouseover="msg(&#39;Change the relative loudness of the inhale and exhale&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
-		</div>
-		-->
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">放松</td><td align="right">兴奋</td></tr></tbody></table><div id="size" onmouseover="msg(&#39;设置呼噜声调调&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
-		</div>
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">离你近</td><td align="right">离你远</td></tr></tbody></table><div id="filter" onmouseover="msg(&#39;设置你和猫的距离&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 50%;"></span></div>
-		</div>
-		<div class="sliderGroup"><table width="100%"><tbody><tr><td align="left">只是呼噜</td><td align="right">还有喵喵叫</td></tr></tbody></table><div id="meow" onmouseover="msg(&#39;你的猫喜欢喵喵叫吗?&#39;)" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 25%;"></span></div>
-		</div>
-		
-		<div id="msg">调整呼噜声</div>
-		</center>
+            <!-- 数据概览卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="glass-effect rounded-2xl p-6 hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform neon-border animate-bounce-in" style="animation-delay: 0.2s;">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">待分配工单</p>
+                            <h3 class="text-3xl font-bold mt-2 mb-3 bg-gradient-to-r from-danger to-warning bg-clip-text text-transparent">12</h3>
+                            <div class="flex items-center text-xs">
+                                <div class="flex items-center text-danger bg-danger-light px-2 py-1 rounded-full">
+                                    <i class="fa fa-arrow-up mr-1"></i> 较昨日 +2
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-danger/20 to-warning/20 p-4 rounded-2xl group-hover:scale-110 transform transition-all duration-300">
+                            <i class="fa fa-clipboard text-danger text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-danger to-warning rounded-full w-3/4 animate-shimmer shimmer-effect"></div>
+                    </div>
+                </div>
 
-</div>
+                <div class="glass-effect rounded-2xl p-6 hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform neon-border animate-bounce-in" style="animation-delay: 0.3s;">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">进行中工单</p>
+                            <h3 class="text-3xl font-bold mt-2 mb-3 bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">38</h3>
+                            <div class="flex items-center text-xs">
+                                <div class="flex items-center text-success bg-success-light px-2 py-1 rounded-full">
+                                    <i class="fa fa-arrow-down mr-1"></i> 较昨日 -5
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-success/20 to-primary/20 p-4 rounded-2xl group-hover:scale-110 transform transition-all duration-300">
+                            <i class="fa fa-cogs text-success text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-success to-primary rounded-full w-4/5 animate-shimmer shimmer-effect"></div>
+                    </div>
+                </div>
 
-<div class="sectionBottomFollow">
-<img src="https://report.niucodata.com/lay/assst/cat5.png" width="46px" style="margin: 0 0 -15px 5px;opacity:0.9;">
-看呼噜来源本喵或者赞助我们:<a target="_blank" href="https://mianbaoduo.com/o/bread/YZabmJ8=">点这里可以看到猫猫本猫欧</a>
-</div>
+                <div class="glass-effect rounded-2xl p-6 hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform neon-border animate-bounce-in" style="animation-delay: 0.4s;">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">今日出勤人员</p>
+                            <h3 class="text-3xl font-bold mt-2 mb-3 bg-gradient-to-r from-warning to-secondary bg-clip-text text-transparent">24</h3>
+                            <div class="text-xs text-gray-500">
+                                <span class="bg-gray-100 px-2 py-1 rounded-full">共32名维修人员</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-warning/20 to-secondary/20 p-4 rounded-2xl group-hover:scale-110 transform transition-all duration-300">
+                            <i class="fa fa-users text-warning text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-warning to-secondary rounded-full w-3/4 animate-shimmer shimmer-effect"></div>
+                    </div>
+                </div>
 
-<div class="tile2">
+                <div class="glass-effect rounded-2xl p-6 hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform neon-border animate-bounce-in" style="animation-delay: 0.5s;">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">平均响应时间</p>
+                            <h3 class="text-3xl font-bold mt-2 mb-3 bg-gradient-to-r from-info to-primary bg-clip-text text-transparent">28<span class="text-sm">分钟</span></h3>
+                            <div class="flex items-center text-xs">
+                                <div class="flex items-center text-success bg-success-light px-2 py-1 rounded-full">
+                                    <i class="fa fa-arrow-down mr-1"></i> 较昨日 -3分钟
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-info/20 to-primary/20 p-4 rounded-2xl group-hover:scale-110 transform transition-all duration-300">
+                            <i class="fa fa-clock-o text-info text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-info to-primary rounded-full w-2/3 animate-shimmer shimmer-effect"></div>
+                    </div>
+                </div>
+            </div>
 
-<p></p>
-<div class="anchor" id="anchor_foreword"></div>
-<div class="section">
-<h1><img src="https://report.niucodata.com/lay/assst/cat.png" width="48px" style="margin-bottom: -21px;opacity:0.9;"> Tips</h1>
-<p>如果听不到声音，请戴耳机，如果还是听不到，那么请换到一个网络好的地方，再等等看，如果还是听不到，那么你可以在微博上找我(<a href="http://weibo.com/u/2819201144/">@调皮的王登科</a>),看能不能把我家的真猫借给你听听</p>
+            <!-- 各站点工单分布图表 -->
+            <div class="mb-8 animate-slide-up" style="animation-delay: 0.6s;">
+                <div class="glass-effect rounded-2xl p-6 border border-white/20">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">各站点紧急程度分布</h2>
+                            <p class="text-sm text-gray-500 mt-1">实时监控各站点工单分布情况</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 text-sm bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 transform" id="showBarChart">
+                                <i class="fa fa-bar-chart mr-2"></i> 柱状图
+                            </button>
+                            <button class="px-4 py-2 text-sm glass-effect border border-white/30 rounded-xl hover:bg-white/20 transition-all duration-300 hover:scale-105 transform backdrop-blur-sm" id="showPieChart">
+                                <i class="fa fa-pie-chart mr-2"></i> 饼图
+                            </button>
+                        </div>
+                    </div>
 
-<p>呼噜声的背后是一笔由开发者默默承担的流量开支，通过下方的方式赞助(我保证不会用来偷偷买猫罐头)</p>
-<center>
-<span id="showpay">
-<a onclick="showpay()">查看赞助方式</a>
-</span>
-</center>
+                    <div class="h-80 relative">
+                        <canvas id="emergencyDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
+            <!-- 各站点派工看板 -->
+            <div class="mb-8 animate-slide-up" style="animation-delay: 0.7s;">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">各站点派工看板</h2>
+                        <p class="text-sm text-gray-500 mt-1">实时监控各站点工作负荷和人员状态</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <div class="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                            <span>低负荷</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <div class="w-3 h-3 bg-warning rounded-full animate-pulse"></div>
+                            <span>中等负荷</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500">
+                            <div class="w-3 h-3 bg-danger rounded-full animate-pulse"></div>
+                            <span>高负荷</span>
+                        </div>
+                    </div>
+                </div>
 
-<p>随时听呼噜</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 北京站点 -->
+                    <div class="glass-effect rounded-2xl overflow-hidden hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform">
+                        <div class="bg-gradient-to-r from-primary to-primary/80 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                            <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-lg">🏢 北京朝阳区站点</h3>
+                                    <span class="px-3 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm">12名维修人员</span>
+                                </div>
+                                <div class="mt-2 text-sm opacity-90">繁忙度：中等 | 技能匹配度：85%</div>
+                            </div>
+                        </div>
 
-<p>
-本站来源于Dr. Ir. Stéphane Pigeon的网站「purrli」，因为国内需要扶墙才能访问且只有英语，我把它移植到国内来了，删减了很多冗余部分，保留了最极致精简的呼噜选项。本站遵循了Dr. Ir. Stéphane 的使用协议，希望国内的猫奴们玩的愉快
-</p>
-</div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">待分配</div>
+                                    <div class="font-bold text-xl text-danger group-hover/stat:scale-110 transform transition-all duration-300">5</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-danger h-1 rounded-full w-4/5 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">进行中</div>
+                                    <div class="font-bold text-xl text-warning group-hover/stat:scale-110 transform transition-all duration-300">18</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-warning h-1 rounded-full w-3/4 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">已完成</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">24</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-full animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold mb-3 text-gray-700">💼 技能需求分布</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">⚡ 高级电工 ×3</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">🔧 中级钳工 ×2</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">💻 初级编程 ×1</span>
+                                </div>
+                            </div>
 
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-semibold text-gray-700">📊 当前负荷</h4>
+                                    <span class="text-xs font-medium text-primary">75%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                                    <div class="bg-gradient-to-r from-primary to-primary/80 h-3 rounded-full transition-all duration-1000 ease-out animate-shimmer shimmer-effect" style="width: 75%"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer shimmer-effect"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center">
+                                    <div class="w-2 h-2 bg-warning rounded-full mr-2 animate-pulse"></div>
+                                    中等负荷 - 运行良好
+                                </div>
+                            </div>
 
+                            <div class="pt-4 border-t border-gray-100">
+                                <button class="w-full py-3 bg-gradient-to-r from-primary/10 to-primary/20 text-primary rounded-xl hover:from-primary/20 hover:to-primary/30 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg">
+                                    <i class="fa fa-eye mr-2"></i>查看详细信息
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-<div class="sectionLast">
-<p><em>不可用于商业用途</em>
-<br>
-<br>
-© 2017-<a href="http://www.wdk.pw">DK</a> & <a href="http://www.stephanepigeon.com/">Dr. Ir. Stéphane Pigeon</a></p>
-</div>
+                    <!-- 上海站点 -->
+                    <div class="glass-effect rounded-2xl overflow-hidden hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform">
+                        <div class="bg-gradient-to-r from-success to-success/80 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                            <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-lg">🏙️ 上海浦东新区站点</h3>
+                                    <span class="px-3 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm">8名维修人员</span>
+                                </div>
+                                <div class="mt-2 text-sm opacity-90">繁忙度：低 | 技能匹配度：92%</div>
+                            </div>
+                        </div>
 
-</div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">待分配</div>
+                                    <div class="font-bold text-xl text-danger group-hover/stat:scale-110 transform transition-all duration-300">3</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-danger h-1 rounded-full w-1/2 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">进行中</div>
+                                    <div class="font-bold text-xl text-warning group-hover/stat:scale-110 transform transition-all duration-300">9</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-warning h-1 rounded-full w-1/2 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">已完成</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">16</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-4/5 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold mb-3 text-gray-700">💼 技能需求分布</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">🔧 高级钳工 ×2</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">🔩 中级管道工 ×1</span>
+                                </div>
+                            </div>
 
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-semibold text-gray-700">📊 当前负荷</h4>
+                                    <span class="text-xs font-medium text-success">45%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                                    <div class="bg-gradient-to-r from-success to-success/80 h-3 rounded-full transition-all duration-1000 ease-out animate-shimmer shimmer-effect" style="width: 45%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center">
+                                    <div class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></div>
+                                    低负荷 - 运行优秀
+                                </div>
+                            </div>
 
-<script>
+                            <div class="pt-4 border-t border-gray-100">
+                                <button class="w-full py-3 bg-gradient-to-r from-success/10 to-success/20 text-success rounded-xl hover:from-success/20 hover:to-success/30 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg">
+                                    <i class="fa fa-eye mr-2"></i>查看详细信息
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-// params
-var sessName="";
-var PPM=30;
-var PPMIN=20;
-var PPMAX=80;
-var INFILE,EXFILE,TIN,PIN,PEX,INENVL,INENVT,EXENVL,EXENVT,BASETONE;
-var TONE=1;
-var STRETCH=1;
-var SYMMETRY=0;
-var RANDOMNESS=0;
-var VARIABILITY=0.5;
-var MEOW=0.09;
-var VOL=4;
-var T;
+                    <!-- 广州站点 -->
+                    <div class="glass-effect rounded-2xl overflow-hidden hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform">
+                        <div class="bg-gradient-to-r from-warning to-warning/80 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                            <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-lg">🌆 广州天河区站点</h3>
+                                    <span class="px-3 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm">10名维修人员</span>
+                                </div>
+                                <div class="mt-2 text-sm opacity-90">繁忙度：中等 | 技能匹配度：78%</div>
+                            </div>
+                        </div>
 
-var inSound,exSound;
-var purrCycle=0;
-var globalR;
-var bWEBAUDIO=0;
-var bIOS=0;
-var bMUTE=0;
-var globalLevel=VOL/5;
-var fileExt;
-var path='https://img.niucodata.com/';
-var refTimeIn;
-var audioTimer;
-var mSprites=new Array();
-var bTimeToMeow;
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">待分配</div>
+                                    <div class="font-bold text-xl text-danger group-hover/stat:scale-110 transform transition-all duration-300">4</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-danger h-1 rounded-full w-2/3 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">进行中</div>
+                                    <div class="font-bold text-xl text-warning group-hover/stat:scale-110 transform transition-all duration-300">11</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-warning h-1 rounded-full w-3/4 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">已完成</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">18</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-full animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-// WEBAUDIO LOADER
-var  context;
-var  inEnv, exEnv, inGain, exGain, meowGain, masterGain;
-var  sound = new Array();
-var  bufferList;
-var  bufferLoader;
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold mb-3 text-gray-700">💼 技能需求分布</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">⚡ 高级电工 ×2</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">💻 中级编程 ×2</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">🔩 初级管道工 ×1</span>
+                                </div>
+                            </div>
 
-function BufferLoader(context, urlList, callback) {
-    this.context = context;
-    this.urlList = urlList;
-    this.onload = callback;
-    this.bufferSubList = new Array();
-    this.loadCount = 0;
-}
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-semibold text-gray-700">📊 当前负荷</h4>
+                                    <span class="text-xs font-medium text-warning">65%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                                    <div class="bg-gradient-to-r from-warning to-warning/80 h-3 rounded-full transition-all duration-1000 ease-out animate-shimmer shimmer-effect" style="width: 65%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center">
+                                    <div class="w-2 h-2 bg-warning rounded-full mr-2 animate-pulse"></div>
+                                    中等负荷 - 运行稳定
+                                </div>
+                            </div>
 
-BufferLoader.prototype.loadBuffer = function(url, index) {
-    // Load buffer asynchronously
-    
-    var request = new XMLHttpRequest();
+                            <div class="pt-4 border-t border-gray-100">
+                                <button class="w-full py-3 bg-gradient-to-r from-warning/10 to-warning/20 text-warning rounded-xl hover:from-warning/20 hover:to-warning/30 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg">
+                                    <i class="fa fa-eye mr-2"></i>查看详细信息
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-    request.open("GET", url, true);
-    request.responseType = "arraybuffer";
-    
-    var loader = this;
+                    <!-- 深圳站点 -->
+                    <div class="glass-effect rounded-2xl overflow-hidden hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform">
+                        <div class="bg-gradient-to-r from-info to-info/80 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                            <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-lg">🏗️ 深圳南山区站点</h3>
+                                    <span class="px-3 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm">6名维修人员</span>
+                                </div>
+                                <div class="mt-2 text-sm opacity-90">繁忙度：低 | 技能匹配度：88%</div>
+                            </div>
+                        </div>
 
-    request.onload = function() {
-        // Asynchronously decode the audio file data in request.response
-        loader.context.decodeAudioData(
-            request.response,
-            function(buffer) {
-                if (!buffer) {
-                    alert('error decoding file data: ' + url);
-                    return;
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">待分配</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">0</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-0"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">进行中</div>
+                                    <div class="font-bold text-xl text-warning group-hover/stat:scale-110 transform transition-all duration-300">5</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-warning h-1 rounded-full w-1/3 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">已完成</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">12</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-4/5 animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold mb-3 text-gray-700">💼 技能需求分布</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">⚡ 中级电工 ×1</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-semibold text-gray-700">📊 当前负荷</h4>
+                                    <span class="text-xs font-medium text-success">35%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                                    <div class="bg-gradient-to-r from-success to-success/80 h-3 rounded-full transition-all duration-1000 ease-out animate-shimmer shimmer-effect" style="width: 35%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 flex items-center">
+                                    <div class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></div>
+                                    低负荷 - 运行轻松
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-100">
+                                <button class="w-full py-3 bg-gradient-to-r from-info/10 to-info/20 text-info rounded-xl hover:from-info/20 hover:to-info/30 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg">
+                                    <i class="fa fa-eye mr-2"></i>查看详细信息
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 成都站点 -->
+                    <div class="glass-effect rounded-2xl overflow-hidden hover:shadow-glass transition-all duration-500 border border-white/20 group hover:scale-105 transform">
+                        <div class="bg-gradient-to-r from-danger to-danger/80 p-6 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                            <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-lg">🏛️ 成都高新区站点</h3>
+                                    <span class="px-3 py-1 text-xs bg-white/20 rounded-full backdrop-blur-sm animate-pulse">9名维修人员</span>
+                                </div>
+                                <div class="mt-2 text-sm opacity-90 flex items-center">
+                                    <span class="mr-2">⚠️ 繁忙度：高</span>
+                                    <span>| 技能匹配度：95%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-3 mb-6">
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">待分配</div>
+                                    <div class="font-bold text-xl text-danger group-hover/stat:scale-110 transform transition-all duration-300 animate-pulse">7</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-danger h-1 rounded-full w-full animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">进行中</div>
+                                    <div class="font-bold text-xl text-warning group-hover/stat:scale-110 transform transition-all duration-300">15</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-warning h-1 rounded-full w-full animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                                <div class="glass-effect rounded-xl p-4 text-center hover:bg-white/20 transition-all duration-300 group/stat">
+                                    <div class="text-xs text-gray-500 mb-1">已完成</div>
+                                    <div class="font-bold text-xl text-success group-hover/stat:scale-110 transform transition-all duration-300">21</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                        <div class="bg-success h-1 rounded-full w-full animate-shimmer shimmer-effect"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4 class="text-sm font-semibold mb-3 text-gray-700">💼 紧急技能需求</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-danger/20 to-danger/30 text-danger rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer animate-pulse">⚡ 高级电工 ×3</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">🔧 中级钳工 ×2</span>
+                                    <span class="px-3 py-1 text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary rounded-full hover:scale-105 transform transition-all duration-300 cursor-pointer">💻 高级编程 ×2</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="text-sm font-semibold text-gray-700">⚠️ 高负荷警告</h4>
+                                    <span class="text-xs font-medium text-danger animate-pulse">85%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 relative overflow-hidden">
+                                    <div class="bg-gradient-to-r from-danger to-warning h-3 rounded-full transition-all duration-1000 ease-out animate-pulse" style="width: 85%"></div>
+                                </div>
+                                <div class="text-xs text-danger mt-1 flex items-center animate-pulse">
+                                    <div class="w-2 h-2 bg-danger rounded-full mr-2 animate-ping"></div>
+                                    高负荷 - 需要支援
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-100">
+                                <button class="w-full py-3 bg-gradient-to-r from-danger/10 to-danger/20 text-danger rounded-xl hover:from-danger/20 hover:to-danger/30 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg animate-pulse">
+                                    <i class="fa fa-exclamation-triangle mr-2"></i>紧急调度支援
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 新建站点卡片 -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 flex flex-col items-center justify-center hover:bg-gradient-to-br hover:from-primary/5 hover:to-secondary/5 transition-all duration-500 cursor-pointer group hover:border-primary/50 hover:scale-105 transform">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4 group-hover:scale-110 transform transition-all duration-300">
+                            <i class="fa fa-plus text-primary text-2xl group-hover:rotate-90 transition-all duration-300"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-700 mb-1">🏗️ 新建站点</h3>
+                        <p class="text-xs text-gray-500 text-center">添加新的维修站点<br/>扩展服务覆盖范围</p>
+                        <div class="mt-3 px-4 py-1 bg-primary/10 text-primary text-xs rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            点击创建
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 人员与工单详情 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style="animation-delay: 0.8s;">
+                <!-- 左侧：人员看板 -->
+                <div>
+                    <div class="glass-effect rounded-2xl p-6 border border-white/20">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">👥 当前站点维修人员</h2>
+                                <p class="text-sm text-gray-500 mt-1">实时人员状态监控</p>
+                            </div>
+                            <div class="relative">
+                                <input type="text" placeholder="🔍 搜索人员..." class="pl-10 pr-4 py-2 text-sm glass-effect border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-300 hover:shadow-lg backdrop-blur-sm w-40">
+                                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto scrollbar-hide">
+                            <!-- 维修人员卡片 -->
+                            <div class="glass-effect border border-white/20 rounded-xl p-4 hover:shadow-glass transition-all duration-500 cursor-pointer group hover:scale-105 transform" data-worker-id="W001">
+                                <div class="flex items-start">
+                                    <div class="relative">
+                                        <img src="https://picsum.photos/id/1025/200/200" alt="张工" class="h-14 w-14 rounded-full object-cover ring-2 ring-success/30 group-hover:ring-success transition-all duration-300">
+                                        <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-white animate-pulse flex items-center justify-center">
+                                            <i class="fa fa-check text-white text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-sm font-semibold text-gray-800">张明</h3>
+                                                <span class="text-xs text-primary font-medium">⚡ 高级电工</span>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs bg-gradient-to-r from-success to-success/80 text-white rounded-full animate-pulse">✅ 空闲</span>
+                                        </div>
+                                        <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-gray-500">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-star text-warning mr-1"></i>
+                                                <span class="font-medium">9.8</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-calendar mr-1"></i>
+                                                <span>8年</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-map-marker mr-1 text-success animate-pulse"></i>
+                                                <span>在线</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 flex flex-wrap gap-1">
+                                            <span class="text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary px-2 py-1 rounded-full">🔧 电路维修</span>
+                                            <span class="text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary px-2 py-1 rounded-full">🤖 PLC调试</span>
+                                            <span class="text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning px-2 py-1 rounded-full">⚙️ 电机维修</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-100">
+                                    <div class="text-xs text-gray-500">
+                                        <span class="font-medium">今日已接单:</span>
+                                        <span class="text-primary font-bold">2单</span>
+                                    </div>
+                                    <button class="text-primary text-sm hover:underline hover:scale-105 transform transition-all duration-300">
+                                        📋 查看详情
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect border border-white/20 rounded-xl p-4 hover:shadow-glass transition-all duration-500 cursor-pointer group hover:scale-105 transform" data-worker-id="W002">
+                                <div class="flex items-start">
+                                    <div class="relative">
+                                        <img src="https://picsum.photos/id/1012/200/200" alt="李工" class="h-14 w-14 rounded-full object-cover ring-2 ring-success/30 group-hover:ring-success transition-all duration-300">
+                                        <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-white animate-pulse flex items-center justify-center">
+                                            <i class="fa fa-check text-white text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-sm font-semibold text-gray-800">李强</h3>
+                                                <span class="text-xs text-primary font-medium">🔧 中级钳工</span>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs bg-gradient-to-r from-success to-success/80 text-white rounded-full animate-pulse">✅ 空闲</span>
+                                        </div>
+                                        <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-gray-500">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-star text-warning mr-1"></i>
+                                                <span class="font-medium">9.5</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-calendar mr-1"></i>
+                                                <span>5年</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-map-marker mr-1 text-success animate-pulse"></i>
+                                                <span>在线</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 flex flex-wrap gap-1">
+                                            <span class="text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary px-2 py-1 rounded-full">🔩 机械维修</span>
+                                            <span class="text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary px-2 py-1 rounded-full">🏗️ 设备安装</span>
+                                            <span class="text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning px-2 py-1 rounded-full">🚰 管道维修</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-100">
+                                    <div class="text-xs text-gray-500">
+                                        <span class="font-medium">今日已接单:</span>
+                                        <span class="text-primary font-bold">1单</span>
+                                    </div>
+                                    <button class="text-primary text-sm hover:underline hover:scale-105 transform transition-all duration-300">
+                                        📋 查看详情
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="glass-effect border border-white/20 rounded-xl p-4 hover:shadow-glass transition-all duration-500 cursor-pointer group hover:scale-105 transform" data-worker-id="W003">
+                                <div class="flex items-start">
+                                    <div class="relative">
+                                        <img src="https://picsum.photos/id/1027/200/200" alt="王工" class="h-14 w-14 rounded-full object-cover ring-2 ring-warning/30 group-hover:ring-warning transition-all duration-300">
+                                        <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-warning rounded-full border-2 border-white animate-pulse flex items-center justify-center">
+                                            <i class="fa fa-wrench text-white text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="text-sm font-semibold text-gray-800">王军</h3>
+                                                <span class="text-xs text-primary font-medium">💻 初级编程</span>
+                                            </div>
+                                            <span class="px-2 py-1 text-xs bg-gradient-to-r from-warning to-warning/80 text-white rounded-full animate-pulse">⚡ 忙碌</span>
+                                        </div>
+                                        <div class="mt-2 grid grid-cols-3 gap-2 text-xs text-gray-500">
+                                            <div class="flex items-center">
+                                                <i class="fa fa-star text-warning mr-1"></i>
+                                                <span class="font-medium">9.2</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-calendar mr-1"></i>
+                                                <span>3年</span>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fa fa-map-marker mr-1 text-warning animate-pulse"></i>
+                                                <span>工作中</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 flex flex-wrap gap-1">
+                                            <span class="text-xs bg-gradient-to-r from-primary/20 to-primary/30 text-primary px-2 py-1 rounded-full">💾 软件调试</span>
+                                            <span class="text-xs bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary px-2 py-1 rounded-full">🤖 自动化控制</span>
+                                            <span class="text-xs bg-gradient-to-r from-warning/20 to-warning/30 text-warning px-2 py-1 rounded-full">🔧 系统维护</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-100">
+                                    <div class="text-xs text-gray-500">
+                                        <span class="font-medium">今日已接单:</span>
+                                        <span class="text-warning font-bold">3单</span>
+                                    </div>
+                                    <button class="text-primary text-sm hover:underline hover:scale-105 transform transition-all duration-300">
+                                        📋 查看详情
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <button class="w-full py-3 bg-gradient-to-r from-primary/10 to-secondary/10 text-primary rounded-xl hover:from-primary/20 hover:to-secondary/20 transition-all duration-300 text-sm font-medium hover:scale-105 transform hover:shadow-lg border border-primary/20">
+                                <i class="fa fa-plus mr-2"></i>添加新员工
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：工单看板 -->
+                <div class="lg:col-span-2">
+                    <div class="glass-effect rounded-2xl p-6 border border-white/20">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="text-lg font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">📋 当前站点工单列表</h2>
+                                <p class="text-sm text-gray-500 mt-1">智能派工，高效处理</p>
+                            </div>
+                            <div class="flex space-x-3">
+                                <div class="relative">
+                                    <select class="appearance-none glass-effect border border-white/30 text-gray-900 text-sm rounded-xl pl-4 pr-12 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-300 hover:shadow-lg backdrop-blur-sm">
+                                        <option value="all">📊 全部工单</option>
+                                        <option value="pending">⏳ 待分配</option>
+                                        <option value="processing">⚡ 进行中</option>
+                                        <option value="completed">✅ 已完成</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                        <i class="fa fa-chevron-down text-xs"></i>
+                                    </div>
+                                </div>
+                                <button class="px-4 py-2 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-105 transform hover:shadow-lg">
+                                    <i class="fa fa-plus mr-2"></i> 新建工单
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-hidden rounded-xl">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">工单编号</th>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">故障类型</th>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">紧急程度</th>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">技能要求</th>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">状态</th>
+                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white/50 backdrop-blur-sm divide-y divide-gray-200">
+                                        <tr class="hover:bg-white/70 transition-all duration-300 group">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">WO-20250530-001</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-danger/20 to-danger/30 text-danger font-medium">⚡ 电路故障</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-danger to-danger/80 text-white font-medium animate-pulse">🚨 紧急</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-primary/20 to-primary/30 text-primary font-medium">⚡ 高级电工</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-600 font-medium">⏳ 待分配</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <div class="flex space-x-2">
+                                                    <button class="px-3 py-1 bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg hover:scale-105 transform transition-all duration-300 text-xs">
+                                                        <i class="fa fa-bolt mr-1"></i> 派工
+                                                    </button>
+                                                    <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-xs">
+                                                        <i class="fa fa-eye mr-1"></i> 查看
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-white/70 transition-all duration-300 group">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">WO-20250530-002</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-warning/20 to-warning/30 text-warning font-medium">🔧 机械故障</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-warning to-warning/80 text-white font-medium">⚠️ 中等</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-secondary/20 to-secondary/30 text-secondary font-medium">🔧 中级钳工</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-warning/20 to-warning/30 text-warning font-medium animate-pulse">⚡ 进行中</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <div class="flex space-x-2">
+                                                    <button class="px-3 py-1 bg-gradient-to-r from-success to-success/80 text-white rounded-lg text-xs">
+                                                        <i class="fa fa-user mr-1"></i> 李强
+                                                    </button>
+                                                    <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-xs">
+                                                        <i class="fa fa-eye mr-1"></i> 查看
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-white/70 transition-all duration-300 group">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">WO-20250530-003</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-info/20 to-info/30 text-info font-medium">💻 软件故障</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-info to-info/80 text-white font-medium">ℹ️ 一般</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-primary/20 to-primary/30 text-primary font-medium">💻 初级编程</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <span class="px-3 py-1 text-xs rounded-full bg-gradient-to-r from-success/20 to-success/30 text-success font-medium">✅ 已完成</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                <div class="flex space-x-2">
+                                                    <button class="px-3 py-1 bg-gradient-to-r from-success to-success/80 text-white rounded-lg text-xs">
+                                                        <i class="fa fa-user mr-1"></i> 王军
+                                                    </button>
+                                                    <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-xs">
+                                                        <i class="fa fa-eye mr-1"></i> 查看
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 分页 -->
+                        <div class="mt-6 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                显示 <span class="font-medium">1</span> 到 <span class="font-medium">3</span> 共 <span class="font-medium">12</span> 条记录
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-sm">
+                                    <i class="fa fa-chevron-left mr-1"></i> 上一页
+                                </button>
+                                <button class="px-3 py-1 bg-gradient-to-r from-primary to-primary/80 text-white rounded-lg text-sm">1</button>
+                                <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-sm">2</button>
+                                <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-sm">3</button>
+                                <button class="px-3 py-1 glass-effect border border-white/30 text-gray-600 rounded-lg hover:scale-105 transform transition-all duration-300 text-sm">
+                                    下一页 <i class="fa fa-chevron-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="glass-effect border-t border-white/20 mt-12 relative z-10">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-600 text-sm mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <span>© 2025 维修工单智能派工系统.</span>
+                        <span class="text-primary">保留所有权利.</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        Powered by AI Intelligence | Version 2.0.1
+                    </div>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-primary transition-all duration-300 hover:scale-110 transform">
+                        <i class="fa fa-question-circle mr-1"></i> 帮助中心
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-primary transition-all duration-300 hover:scale-110 transform">
+                        <i class="fa fa-file-text-o mr-1"></i> 使用手册
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-primary transition-all duration-300 hover:scale-110 transform">
+                        <i class="fa fa-phone mr-1"></i> 联系我们
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-primary transition-all duration-300 hover:scale-110 transform">
+                        <i class="fa fa-shield mr-1"></i> 隐私政策
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 添加JavaScript -->
+    <script>
+        // 时间更新
+        function updateDateTime() {
+            const now = new Date();
+            const dateElement = document.getElementById('currentDate');
+            const timeElement = document.getElementById('currentTime');
+
+            if (dateElement) {
+                dateElement.textContent = now.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long'
+                });
+            }
+
+            if (timeElement) {
+                timeElement.textContent = now.toLocaleTimeString('zh-CN');
+            }
+        }
+
+        // 页面滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.backdropFilter = 'blur(20px)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.25)';
+                navbar.style.backdropFilter = 'blur(15px)';
+            }
+        });
+
+        // 图表初始化
+        const ctx = document.getElementById('emergencyDistributionChart').getContext('2d');
+
+        const siteNames = ['北京朝阳区', '上海浦东新区', '广州天河区', '深圳南山区', '成都高新区'];
+        const emergencyData = {
+            '紧急': [5, 3, 4, 0, 7],
+            '中等': [12, 9, 11, 5, 15],
+            '一般': [18, 16, 18, 12, 21]
+        };
+
+        let chartConfig = {
+            type: 'bar',
+            data: {
+                labels: siteNames,
+                datasets: [
+                    {
+                        label: '🚨 紧急',
+                        data: emergencyData['紧急'],
+                        backgroundColor: 'rgba(245, 63, 63, 0.8)',
+                        borderColor: 'rgba(245, 63, 63, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    },
+                    {
+                        label: '⚠️ 中等',
+                        data: emergencyData['中等'],
+                        backgroundColor: 'rgba(255, 125, 0, 0.8)',
+                        borderColor: 'rgba(255, 125, 0, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    },
+                    {
+                        label: 'ℹ️ 一般',
+                        data: emergencyData['一般'],
+                        backgroundColor: 'rgba(134, 144, 156, 0.8)',
+                        borderColor: 'rgba(134, 144, 156, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'rgba(22, 93, 255, 0.8)',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutBounce'
+                }}
+            };
+
+        let emergencyChart = new Chart(ctx, chartConfig);
+
+        // 图表切换功能
+        document.getElementById('showBarChart').addEventListener('click', function() {
+            this.classList.add('bg-primary', 'text-white');
+            this.classList.remove('glass-effect', 'border', 'border-white/30');
+
+            document.getElementById('showPieChart').classList.remove('bg-primary', 'text-white');
+            document.getElementById('showPieChart').classList.add('glass-effect', 'border', 'border-white/30');
+
+            chartConfig.type = 'bar';
+            chartConfig.data = {
+                labels: siteNames,
+                datasets: [
+                    {
+                        label: '🚨 紧急',
+                        data: emergencyData['紧急'],
+                        backgroundColor: 'rgba(245, 63, 63, 0.8)',
+                        borderColor: 'rgba(245, 63, 63, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    },
+                    {
+                        label: '⚠️ 中等',
+                        data: emergencyData['中等'],
+                        backgroundColor: 'rgba(255, 125, 0, 0.8)',
+                        borderColor: 'rgba(255, 125, 0, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    },
+                    {
+                        label: 'ℹ️ 一般',
+                        data: emergencyData['一般'],
+                        backgroundColor: 'rgba(134, 144, 156, 0.8)',
+                        borderColor: 'rgba(134, 144, 156, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                    }
+                ]
+            };
+
+            emergencyChart.destroy();
+            emergencyChart = new Chart(ctx, chartConfig);
+        });
+
+        document.getElementById('showPieChart').addEventListener('click', function() {
+            this.classList.add('bg-primary', 'text-white');
+            this.classList.remove('glass-effect', 'border', 'border-white/30');
+
+            document.getElementById('showBarChart').classList.remove('bg-primary', 'text-white');
+            document.getElementById('showBarChart').classList.add('glass-effect', 'border', 'border-white/30');
+
+            const totalEmergency = emergencyData['紧急'].reduce((a, b) => a + b, 0);
+            const totalMedium = emergencyData['中等'].reduce((a, b) => a + b, 0);
+            const totalNormal = emergencyData['一般'].reduce((a, b) => a + b, 0);
+
+            chartConfig.type = 'doughnut';
+            chartConfig.data = {
+                labels: ['🚨 紧急', '⚠️ 中等', 'ℹ️ 一般'],
+                datasets: [{
+                    data: [totalEmergency, totalMedium, totalNormal],
+                    backgroundColor: [
+                        'rgba(245, 63, 63, 0.8)',
+                        'rgba(255, 125, 0, 0.8)',
+                        'rgba(134, 144, 156, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(245, 63, 63, 1)',
+                        'rgba(255, 125, 0, 1)',
+                        'rgba(134, 144, 156, 1)'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            };
+            chartConfig.options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'rgba(22, 93, 255, 0.8)',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutElastic'
                 }
-                loader.bufferSubList[index] = buffer;
-                if (++loader.loadCount == loader.urlList.length)
-                    loader.onload(loader.bufferSubList);
-            }    
-        );
-    }
-    request.onerror = function() {}
-    request.send();
-}
+            };
 
-BufferLoader.prototype.load = function(channel) {
-    for (var i = 0; i < this.urlList.length; ++i)
-        this.loadBuffer(this.urlList[i],i);
-}
+            emergencyChart.destroy();
+            emergencyChart = new Chart(ctx, chartConfig);
+        });
 
+        // 添加页面加载动画
+        window.addEventListener('load', function() {
+            // 更新时间
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
 
+            // 卡片动画
+            const cards = document.querySelectorAll('.glass-effect');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('animate-slide-up');
+                }, 100 * index);
+            });
 
-function init() {
+            // 添加波浪动画
+            const waveElement = document.querySelector('.wave');
+            if (waveElement) {
+                setInterval(() => {
+                    waveElement.style.transform = 'rotate(20deg)';
+                    setTimeout(() => {
+                        waveElement.style.transform = 'rotate(-20deg)';
+                    }, 200);
+                    setTimeout(() => {
+                        waveElement.style.transform = 'rotate(0deg)';
+                    }, 400);
+                }, 3000);
+            }
+        });
 
-// Checking browser compatibility
-	 
-	var a = document.createElement('audio');
-	fileExt=".mp3";
-	if (!!(a.canPlayType && a.canPlayType('audio/mp4;').replace(/no/, ''))){fileExt=".m4a";};
-	if (!!(a.canPlayType && a.canPlayType('audio/ogg;').replace(/no/, ''))){fileExt=".ogg";};
-	console.log(fileExt+' selected as preferred audio file format');
-	bIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? 1 : 0 );
-	
-	if(typeof webkitAudioContext !== "undefined") bWEBAUDIO=1;
-	if(typeof AudioContext !== "undefined") bWEBAUDIO=1;
-	if (bIOS) bWEBAUDIO=1;
-	
-	if (bWEBAUDIO) {
-		if (typeof AudioContext !== 'undefined') context= new AudioContext();
-		else context = new webkitAudioContext();
-		
-		inEnv = context.createGain();
-		exEnv = context.createGain();
-		inGain = context.createGain();
-		exGain = context.createGain();
-		meowGain = context.createGain();
-		masterGain = context.createGain();
-		
-		masterGain.gain.setValueAtTime(Math.pow(globalLevel,2),context.currentTime);
-		inEnv.gain.setValueAtTime(0,context.currentTime);		
-		exEnv.gain.setValueAtTime(0,context.currentTime);
-		inGain.gain.value=1;		
-		exGain.gain.value=1;
-		meowGain.gain.value=0.5;
-		
-		filter=context.createBiquadFilter();
-		filter.type="lowshelf";
-		filter.frequency.value=80;
-		filter.Q.value=1;
-		filter.gain.value=-18;
-		filter.connect(context.destination);
-		
-		meowGain.connect(masterGain);
-		masterGain.connect(filter);
-		exEnv.connect(exGain);
-		inEnv.connect(inGain);
-		exGain.connect(masterGain);
-		inGain.connect(masterGain);
-	}
-	else alert('浏览器版本过低，网站不能正常运行');
+        // 添加站点选择器变化效果
+        document.getElementById('siteSelector').addEventListener('change', function() {
+            const selectedValue = this.value;
 
+            // 添加加载效果
+            const refreshBtn = document.querySelector('[data-action="refresh"]');
+            if (refreshBtn) {
+                const icon = refreshBtn.querySelector('i');
+                icon.classList.add('animate-spin');
 
-	// OK - build UI
-	
-  // add touchstart listener to force play on iOS
-	if (bIOS==1) {
-		$("#radioTouch").css("display","block");
-		window.addEventListener('touchstart', function() {
-			// create empty buffer
-			var buffer = context.createBuffer(1, 1, 22050);
-			var source = context.createBufferSource();
-			source.buffer = buffer;
-			// connect to output (your speakers)
-			source.connect(context.destination);
-			// play the file
-			source.start(0);
-			$("#radioTouch").css("display","none")
-		}, false);
-	}
-	
-	setParam('default');
-	buildUI();
-	
-	timeOut=performance.now();
-	loadSoundSetAndPlay();
-	
-	
-	// $('.pTn').powerTip({placement: 'n'});
+                setTimeout(() => {
+                    icon.classList.remove('animate-spin');
+                }, 1000);
+            }
 
-}
+            // 显示切换消息
+            showNotification(`已切换到: ${this.options[this.selectedIndex].text}`, 'success');
+        });
 
-function setParam(name){
-	sessName=name;
-	switch(sessName) {
-		case "default":
-			INFILE=name+"_e";EXFILE=name+"_i";MFILE=name+"_m";
-			mSprites=[0,0.8,1.2,2.5,3.5,4.4,5.5,6.3,7.1,7.8,8.6,9.7,10.6,11.6,12.6,13.7,15.1,16.3,17.4,18.6,19.3];
-			PPM=35;TIN=0.5;PIN=0.03;PEX=0.03;
-			BASETONE=1.05;
-			INENVL=[0,		0.2,	0.8,		0.8, 		0];
-			INENVT=[0,		0.2,	0.5,		1,		1.35];
-			EXENVL=[0.8,	0.8,	0];
-			EXENVT=[0.1,	1,		1.45];
-			break;
-	}
-}
+        // 通知函数
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-6 z-50 p-4 rounded-xl shadow-lg transition-all duration-500 transform translate-x-full glass-effect border border-white/30`;
 
-function buildUI(){
-      $("#volIco").html("<img src='./Pix/slider_vol-.png' class='sliderIcon pTn' alt='Volume' title='Volume Down' onclick='$(\"#volume\").slider(\"value\",$(\"#volume\").slider(\"option\",\"value\")-10);'>");
-      $("#volIcoR").html("<img src='./Pix/slider_vol+.png' class='sliderIcon pTn' alt='Volume' title='Volume Up' onclick='$(\"#volume\").slider(\"value\",$(\"#volume\").slider(\"option\",\"value\")+10);'>");
-      	$(function(){$("#tempo").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        value: Math.pow((PPM-PPMIN)/(PPMAX-PPMIN),0.5),
-        step:0.01,
-        slide: function(e, ui) {
-          setPPM(ui.value);
-        },
-        change: function(e, ui) {
-          setPPM(ui.value);
+            const colors = {
+                success: 'text-success border-success/30',
+                error: 'text-danger border-danger/30',
+                warning: 'text-warning border-warning/30',
+                info: 'text-primary border-primary/30'
+            };
+
+            notification.classList.add(colors[type] || colors.info);
+
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                        <i class="fa fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // 滑入动画
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // 自动移除
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 4000);
         }
-      });} );
-      $(function(){$("#size").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        step:0.01,
-        value: 0.5,
-        slide: function(e, ui) {
-          setTone(ui.value);
-        },
-        change: function(e, ui) {
-          setTone(ui.value);
+
+        // 添加鼠标跟随效果
+        document.addEventListener('mousemove', function(e) {
+            const cursor = document.querySelector('.cursor-glow');
+            if (cursor) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            }
+        });
+
+        // 添加按钮点击涟漪效果
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // 添加实时数据更新模拟
+        function simulateDataUpdate() {
+            const pendingElement = document.querySelector('[data-stat="pending"]');
+            const processingElement = document.querySelector('[data-stat="processing"]');
+
+            if (pendingElement && processingElement) {
+                const currentPending = parseInt(pendingElement.textContent);
+                const currentProcessing = parseInt(processingElement.textContent);
+
+                // 随机增减数据
+                const pendingChange = Math.floor(Math.random() * 3) - 1; // -1, 0, 1
+                const processingChange = Math.floor(Math.random() * 3) - 1;
+
+                const newPending = Math.max(0, currentPending + pendingChange);
+                const newProcessing = Math.max(0, currentProcessing + processingChange);
+
+                // 添加数字变化动画
+                animateNumber(pendingElement, currentPending, newPending);
+                animateNumber(processingElement, currentProcessing, newProcessing);
+            }
         }
-      });} );
-      $(function(){$("#symmetry").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        step:0.01,
-        value:0.5,
-        slide: function(e, ui) {
-          setSymmetry(ui.value);
-        },
-        change: function(e, ui) {
-          setSymmetry(ui.value);
+
+        // 数字动画函数
+        function animateNumber(element, start, end) {
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                const current = Math.round(start + (end - start) * progress);
+                element.textContent = current;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
         }
-      });} );
-     $(function(){$("#variability").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        step:0.01,
-        value:0.5,
-        value: VARIABILITY,
-        slide: function(e, ui) {
-          setVariability(ui.value);
-        },
-        change: function(e, ui) {
-          setVariability(ui.value);
+
+        // 每30秒更新一次数据
+        setInterval(simulateDataUpdate, 30000);
+
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + R: 刷新数据
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                showNotification('正在刷新数据...', 'info');
+                // 这里可以调用实际的刷新函数
+            }
+
+            // Ctrl + N: 新建工单
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                showNotification('打开新建工单窗口...', 'info');
+                // 这里可以调用新建工单函数
+            }
+        });
+
+        // 添加响应式菜单控制
+        const mobileMenuToggle = document.querySelector('[data-mobile-menu]');
+        const mobileMenu = document.querySelector('[data-mobile-menu-content]');
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('animate-slide-down');
+            });
         }
-      });} );
-      $(function(){$("#filter").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        step:0.01,
-        value: 0.5,
-        slide: function(e, ui) {
-          setFilter(ui.value);
-        },
-        change: function(e, ui) {
-          setFilter(ui.value);
+
+        // 添加搜索功能
+        const searchInputs = document.querySelectorAll('input[type="text"]');
+        searchInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                // 这里可以添加实际的搜索逻辑
+                if (searchTerm.length > 0) {
+                    this.classList.add('ring-2', 'ring-primary/50');
+                } else {
+                    this.classList.remove('ring-2', 'ring-primary/50');
+                }
+            });
+        });
+
+        // 添加深色模式切换
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+            showNotification(`已切换到${isDark ? '深色' : '浅色'}模式`, 'success');
         }
-      });} );
-      $(function(){$("#meow").slider({
-        animate: "slow",
-        min: 0,
-        max: 1,
-        step:0.01,
-        value: 0.25,
-        slide: function(e, ui) {
-          setMeow(ui.value);
-        },
-        change: function(e, ui) {
-          setMeow(ui.value);
+
+        // 检查本地存储的深色模式设置
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
         }
-      });} );
-}
 
-function volUp(){
-	if (bMUTE) toggleMute();
-	else {
-	if (++VOL==6) VOL=5;
-	globalLevel=VOL/5;
-	masterGain.gain.cancelScheduledValues(context.currentTime);
-	masterGain.gain.setValueAtTime(masterGain.gain.value,context.currentTime);
-	masterGain.gain.linearRampToValueAtTime(Math.pow(globalLevel,2),context.currentTime+0.2);
-	$('#levelBars').attr("src","./Pix/level"+VOL+".png");
-	}
-}
+        console.log('🎉 维修工单智能派工系统已启动！');
+        console.log('💡 提示：按 Ctrl+R 刷新数据，Ctrl+N 新建工单');
+    </script>
 
-function volDown(){
-	if (bMUTE) toggleMute();
-	else {
-	if (--VOL==-1) VOL=0;
-	globalLevel=VOL/5;
-	masterGain.gain.cancelScheduledValues(context.currentTime);
-	masterGain.gain.setValueAtTime(masterGain.gain.value,context.currentTime);
-	masterGain.gain.linearRampToValueAtTime(Math.pow(globalLevel,2),context.currentTime+0.2);
-	$('#levelBars').attr("src","./Pix/level"+VOL+".png");
-	}
-}
+    <!-- 添加涟漪效果样式 -->
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
 
-function toggleMute(){
-	bMUTE=1-bMUTE;
-	if (bMUTE==0) {
-		purrIn();
-		$('#mute').css('opacity', '0.5');
-	}
-	else {
-		$('#mute').css('opacity', '1');
-	}
-}
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
 
-function setPPM(value){
-	PPM=Math.round((PPMIN+Math.pow(value,2)*(PPMAX-PPMIN))*10)/10;
-	purrCycle=0;
-	msg(PPM+' 次呼噜／分钟');
-}
+        .wave {
+            display: inline-block;
+            transition: transform 0.2s ease-in-out;
+        }
 
-function setTone(value){
-	TONE = (0.92+value/8)*BASETONE;
-	msg(Math.round(value*100)+'%');
-}
+        /* 深色模式样式 */
+        .dark {
+            color-scheme: dark;
+        }
 
-function setVariability(value){
-	VARIABILITY = value;
-	msg(Math.round(value*100)+'%');
-}
+        .dark .glass-effect {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
+        .dark body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
 
-function setFilter(value){
-	filter.frequency.value=Math.round((20+Math.pow(value,2)*(200-20))*10)/10;
-	meowGain.gain.value=0.5+(1-value)/3;
-	msg(Math.round(value*100)+'%');
-}
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
 
-function setSymmetry(value){
-	SYMMETRY=-1+2*value;
-	if (SYMMETRY>0) {
-		exGain.gain.value=1-0.7*SYMMETRY;
-		inGain.gain.value=1;
-	}
-	else
-	{
-		exGain.gain.value=1;
-		inGain.gain.value=1+0.7*SYMMETRY;
-	}
-	msg(Math.round(SYMMETRY*100)+'%');
-}
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
 
-function setMeow(value){
-	var MPM;
-	MEOW = value*value;
-	MPM=MEOW*4;
-	if (MPM>1) msg(Math.round(value*100)+'% • 周围 '+Math.round(MPM)+' 次喵喵叫／分钟');
-	if (MPM<1) msg(Math.round(value*100)+'% • 周围每 '+Math.round(1/MPM)+' 分钟一次喵喵叫');
-	if (MEOW==0) msg(Math.round(value*100)+'% • 净呼噜声...');
-}
+        ::-webkit-scrollbar-thumb {
+            background: rgba(22, 93, 255, 0.5);
+            border-radius: 3px;
+        }
 
-function loadSoundSetAndPlay(){
-	bufferLoader = new BufferLoader(
-		context,
-		[
-		  path+INFILE+fileExt,
-		  path+EXFILE+fileExt,
-		  path+MFILE+fileExt,
-		  path+"5s"+fileExt,
-		],
-		finishedLoading
-		);
-	bufferLoader.load();
-}
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(22, 93, 255, 0.7);
+        }
 
-function finishedLoading(bf) { // bf given by  loader.onload;
+        /* 选择文本颜色 */
+        ::selection {
+            background: rgba(22, 93, 255, 0.2);
+            color: #165DFF;
+        }
 
-	bufferList=bf;
+        /* 加载动画 */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #165DFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-	inSound = context.createBufferSource();
-	inSound.buffer = bufferList[0];
-	inSound.connect(inEnv);
-	inSound.loop=1;
-	inSound.start(0,0);
-	
-	exSound = context.createBufferSource();
-	exSound.buffer = bufferList[1];
-	exSound.connect(exEnv);
-	exSound.loop=1;
-	exSound.start(0,0);
-	
-	purrIn();
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-	// fadeIn(name,level,1);
-}
+        /* 工具提示 */
+        .tooltip {
+            position: relative;
+        }
 
-function ran(min,max){
-	return (min+Math.random()*(max-min));
-}
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
 
-function purrIn() {
-
-	var dla=performance.now()-refTimeIn;
-	// if dla > 100ms... we have a problem (power saving)
-	
-	bTimeToMeow=0;
-	var draw;
-	if (MEOW>0) {
-		draw=Math.floor(ran(0,PPM/MEOW/4));
-		if (draw==0) bTimeToMeow=1;
-		}
-
-	globalR=ran(0.9,1.1);
-	if (purrCycle==0) {
-		if (ran(0,1)<VARIABILITY) {
-			purrCycle=Math.floor(ran(0,4));
-			T=60/ran(Math.max(PPM/2,PPMIN),Math.min(PPM*3,PPMAX));
-		}
-		else T=60/PPM*globalR;
-	}
-	else {
-		purrCycle--;
-	}
-	
-	var tIN=TIN*globalR;
-	var pIN=PIN+ran(0,0.05);
-	var inEnvL=[];
-	var inEnvT=[];
-	var r=ran(0.85,1.0);
-	for (var k=0;k<INENVL.length;k++) {
-		inEnvL[k]=INENVL[k]*ran(0.85,1.0);
-		inEnvT[k]=INENVT[k]*r;
-	}
-	
-	inSound.playbackRate.value = TONE+ran(-0.03,0.03);
-	
-	var now=context.currentTime;
-	
-	inEnv.gain.linearRampToValueAtTime(0,now);
-	for (var k=0;k<inEnvL.length;k++) inEnv.gain.linearRampToValueAtTime(inEnvL[k],now+T*tIN*inEnvT[k]);
-
-  	audioTimer = context.createBufferSource();
-	audioTimer.buffer = bufferList[3];
-	audioTimer.connect(masterGain);
-	if (bMUTE==0) {
-		if (bTimeToMeow==1) audioTimer.onended=function(){meow();purrOut();};
-		else audioTimer.onended=function(){purrOut();};
-	}
-  	audioTimer.start(0,0,T*(tIN+pIN));
-	$( "#purrLayer" ).fadeTo(T*(tIN+pIN)*900,0.7);
-}
-
-function purrOut() {
-
-	var tIN=TIN*globalR;
-	var pIN=PIN*ran(0,1);
-	var pEX=PEX*ran(0,1);
-	var tEX=(1-tIN-pIN-pEX);
-	var exEnvL=[];
-	var exEnvT=[];
-	var r=ran(0.85,1.0);
-	for (var k=0;k<EXENVL.length;k++) {
-		exEnvL[k]=EXENVL[k]*ran(0.85,1.0)*(1-0.9*bTimeToMeow);
-		exEnvT[k]=EXENVT[k]*r*(1+0.5*bTimeToMeow);
-	}
-	
-	exSound.playbackRate.value = TONE+ran(-0.03,0.03);
-	
-	var now=context.currentTime;
-	
-	exEnv.gain.linearRampToValueAtTime(0,now);
-	for (var k=0;k<exEnvL.length;k++) exEnv.gain.linearRampToValueAtTime(exEnvL[k],now+T*tEX*exEnvT[k]);
-	
-	refTimeIn=performance.now()+T*(tEX+pEX)*1000;
-	
-	audioTimer = context.createBufferSource();
-	audioTimer.buffer = bufferList[3];
-	audioTimer.connect(masterGain);
-	if (bMUTE==0) { 
-		audioTimer.onended=function(){purrIn();};
-		}
-  	audioTimer.start(0,0,T*(tEX+pEX));
-  	$( "#purrLayer" ).fadeTo(T*(tEX+pEX)*900,0);
-}
-
-function meow(){
-	var meowSound = context.createBufferSource();
-	//meowSound.onended=function(){purrIn();};
-	meowSound.buffer = bufferList[2];
-	meowSound.playbackRate.value=0.85+ran(0,0.3);
-	// if (ran(0,1)>0.6) meowSound.onended=function(){meow();};
-	meowSound.connect(meowGain);
-	var pos=Math.floor(ran(0,mSprites.length-1));
-	meowSound.start(context.currentTime,mSprites[pos],mSprites[pos+1]-mSprites[pos]);
-}
-
-
-function msg(msg){
-		$("#msg").html(msg);
-}
-
-</script>
-<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-<script>
-function updateProgress(sMsg) 
-    {  
-        document.getElementById("show").innerHTML = sMsg; 
-    }
-
-  /*
-   * 注意：
-   * 1. 所有的JS接口只能在公众号绑定的域名下调用，公众号开发者需要先登录微信公众平台进入“公众号设置”的“功能设置”里填写“JS接口安全域名”。
-   * 2. 如果发现在 Android 不能分享自定义内容，请到官网下载最新的包覆盖安装，Android 自定义分享接口需升级至 6.0.2.58 版本及以上。
-   * 3. 常见问题及完整 JS-SDK 文档地址：http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html
-   *
-   * 开发中遇到问题详见文档“附录5-常见错误及解决办法”解决，如仍未能解决可通过以下渠道反馈：
-   * 邮箱地址：weixin-open@qq.com
-   * 邮件主题：【微信JS-SDK反馈】具体问题
-   * 邮件内容说明：用简明的语言描述问题所在，并交代清楚遇到该问题的场景，可附上截屏图片，微信团队会尽快处理你的反馈。
-   */
-  wx.config({
-    debug: false,
-    appId: 'wx0945d58073ddc9ee',
-    timestamp: 1598519638,
-    nonceStr: 'lItgy8Y0PwIdYRH0',
-    signature: '962a13fcd0f1fa3a5c4517aa75fe0c47c899be3f',
-    jsApiList: [
-    'onMenuShareTimeline',
-    'hideMenuItems',
-    'onMenuShareAppMessage'
-      // 所有要调用的 API 都要加到这个列表中
-    ]
-  });
-  wx.error(function(res){
-
-    // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-
-});
-
-  wx.ready(function () {
-    // 在这里调用 API
-    wx.onMenuShareTimeline({
-    title: '在线听猫打呼噜', // 分享标题
-    link: 'https://m.niucodata.com/cat/cat.php', // 分享链接
-    imgUrl: 'https://img.niucodata.com/2017070654678fgr3g3tgr.png', // 分享图标
-    success: function () { 
-        
-    },
-    cancel: function () { 
-        
-    }
-});
-    wx.onMenuShareAppMessage({
-    title: '在线听猫打呼噜', // 分享标题
-    desc: '你的手机里原来住着一只猫', // 分享描述
-    link: 'https://m.niucodata.com/cat/cat.php', // 分享链接
-    imgUrl: 'https://img.niucodata.com/2017070654678fgr3g3tgr.png', // 分享图标
-    type: '', // 分享类型,music、video或link，不填默认为link
-    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-    success: function () { 
-        // 用户确认分享后执行的回调函数
-    },
-    cancel: function () { 
-        // 用户取消分享后执行的回调函数
-    }
-});
-
-    wx.hideMenuItems({
-    menuList: ['menuItem:copyUr'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
-    });
-
-
-
-  });
-function showpay(){
-	document.getElementById('showpay').innerHTML = '支付宝:18981932715<br>微信：关注下方的公众号，点进近期的文章，拉到底部即可赞赏了～'
-}
-</script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-49134421-4', 'auto');
-  ga('send', 'pageview');
-
-</script>
+        .tooltip:hover::before {
+            opacity: 1;
+        }
+    </style>
+</body>
+</html>
