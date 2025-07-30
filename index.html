@@ -3,692 +3,1314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>站点管理系统</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>站点人员效率评分看板</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        /* 所有CSS样式保持不变 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Arial', 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37); border: 1px solid rgba(255, 255, 255, 0.18); }
-        .header h1 { color: #333; font-size: 2.5em; text-align: center; margin-bottom: 10px; }
-        #userInfo { text-align: right; color: #666; margin-bottom: 10px; }
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
-        .nav-tab { padding: 12px 24px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
-        .nav-tab:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
-        .nav-tab.active { background: linear-gradient(45deg, #ff6b6b, #ee5a24); }
-        .content-section { display: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 30px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37); border: 1px solid rgba(255, 255, 255, 0.18); }
-        .content-section.active { display: block; animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .hidden { display: none; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card h3 { font-size: 1.2em; margin-bottom: 15px; opacity: 0.9; }
-        .stat-value { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
-        .chart-container { background: white; border-radius: 15px; padding: 20px; margin: 20px 0; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); position: relative; }
-        .login-form { max-width: 400px; margin: 50px auto; background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 16px; transition: border-color 0.3s ease; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 10px rgba(102, 126, 234, 0.3); }
-        .btn { padding: 12px 30px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
-        .btn-primary { background: linear-gradient(45deg, #667eea, #764ba2); color: white; }
-        .btn-success { background: linear-gradient(45deg, #56ab2f, #a8e6cf); color: white; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); }
-        .btn-sm { padding: 5px 12px; font-size: 12px; border-radius: 15px; background: #6c757d; color: white; border: none; cursor: pointer; }
-        .btn-sm:hover { background: #5a6268; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .table { width: 100%; border-collapse: collapse; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); }
-        .table th, .table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        .table th { background: linear-gradient(45deg, #667eea, #764ba2); color: white; font-weight: bold; }
-        .table tr:hover { background: #f8f9ff; }
-        .task-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-overdue { background: #f8d7da; color: #721c24; }
-        .text-danger { color: #dc3545; font-weight: bold; }
-        .status-light { font-size: 20px; vertical-align: middle; margin-right: 5px; }
-        .status-online { color: #28a745; }
-        .status-warning { color: #ffc107; }
-        .status-error { color: #dc3545; }
-        .activity-feed { list-style: none; padding: 0; }
-        .feed-item { padding: 15px 0; border-bottom: 1px solid #eee; font-size: 14px; line-height: 1.5; }
-        .feed-item:last-child { border-bottom: none; }
-        .feed-item small { display: block; color: #999; margin-top: 5px; }
-        .feed-item strong { font-weight: normal; }
-        .feed-item strong span { font-weight: bold; }
-        .controls-bar { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .controls-bar .form-group { margin-bottom: 0; }
-        .controls-bar .form-group label { font-size: 14px; margin-right: 5px; color: #555; display: block; margin-bottom: 5px; }
-        .task-table .progress-bar { width: 80px; height: 8px; background-color: #e9ecef; border-radius: 10px; display: inline-block; vertical-align: middle; }
-        .task-table .progress-bar div { height: 100%; border-radius: 10px; }
-        .task-table .progress-text { font-size: 12px; margin-left: 8px; color: #666; vertical-align: middle; }
-        .btn-sm.btn-info { background: #17a2b8; }
-        .btn-sm.btn-warn { background: #ffc107; color: #333; }
-        .btn-sm.btn-danger { background: #dc3545; }
-        .task-card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-        .task-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: all 0.3s ease; }
-        .task-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .task-card-title { margin-right: 10px; font-size: 1.1em; font-weight: bold; color: #333; }
-        .task-card-tags .tag { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 5px; }
-        .tag-priority-high { background-color: #f8d7da; color: #721c24; }
-        .tag-priority-medium { background-color: #fff3cd; color: #856404; }
-        .tag-priority-low { background-color: #d4edda; color: #155724; }
-        .tag-status-pending { background-color: #ffe8cc; color: #995c00; }
-        .tag-status-completed { background-color: #d1e7dd; color: #0f5132; }
-        .tag-status-overdue { background: #f8d7da; color: #721c24; }
-        .task-card-description { color: #666; font-size: 14px; line-height: 1.6; flex-grow: 1; margin-bottom: 15px; }
-        .task-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 13px; color: #888; }
-        .task-card-actions .btn-sm.btn-success { background: #28a745; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: #fff; border-radius: 15px; width: 90%; max-width: 600px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; max-height: 80vh; animation: zoomIn 0.3s ease-out; }
-        @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 1.5em; color: #333; }
-        .modal-close { background: none; border: none; font-size: 2.2em; cursor: pointer; color: #aaa; line-height: 1; padding: 0;}
-        .modal-body { padding: 20px; overflow-y: auto; }
-        .task-updates .update-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
-        .task-updates .update-item p { margin: 0; }
-        .task-updates .update-item small { color: #888; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid #eee; text-align: right; }
-        #inventoryBatchTable input,
-        #inventoryBatchTable select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-        #inventoryBatchTable input:focus,
-        #inventoryBatchTable select:focus { border-color: #667eea; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); outline: none; }
-        .btn-delete-row { background: none; border: none; color: #dc3545; font-size: 1.5em; cursor: pointer; padding: 0 5px; }
-        .discrepancy-cell { font-weight: bold; text-align: center; }
-        .discrepancy-positive { color: #28a745; }
-        .discrepancy-negative { color: #dc3545; }
-        .discrepancy-row { background-color: #fff3cd !important; }
+        /* 自定义渐变背景 */
+        .gradient-bg-mvp { background: linear-gradient(135deg, #FCD34D 0%, #F97316 100%); }
+        .gradient-bg-star { background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%); }
+        .gradient-bg-potential { background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%); }
+        .gradient-bg-good { background: linear-gradient(135deg, #10B981 0%, #14B8A6 100%); }
+        .gradient-bg-default { background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%); }
+        
+        /* 自定义动画 */
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in-up { animation: slideInUp 0.3s ease-out; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 进度条动画 */
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        
+        /* 自定义滚动条 */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .mobile-text-sm { font-size: 0.875rem; }
+            .mobile-p-2 { padding: 0.5rem; }
+            .mobile-gap-2 { gap: 0.5rem; }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 玻璃态效果 */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 数字计数动画 */
+        .count-up {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        /* 状态指示器 */
+        .status-indicator {
+            position: relative;
+        }
+        
+        .status-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-up::before { background-color: #10B981; }
+        .status-down::before { background-color: #EF4444; }
+        .status-stable::before { background-color: #F59E0B; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>站点管理系统</h1>
-            <div id="userInfo" class="hidden">
-                欢迎, <span id="currentUser"></span> | <a href="javascript:void(0);" onclick="logout()">退出登录</a>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div id="app" class="p-4 max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8 fade-in">
+            <div class="glass-effect rounded-2xl shadow-xl p-6 md:p-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center">
+                    <div class="mb-4 lg:mb-0">
+                        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                            🏢 站点人员效率评分看板
+                        </h1>
+                        <p class="text-gray-600 text-lg mb-3">📊 智能化个人vs部门对比分析系统</p>
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                            <div class="flex items-center gap-2 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                                <span>🏆</span>
+                                <span>MVP(90+)</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
+                                <span>⭐</span>
+                                <span>明星员工(80-89)</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                <span>🎯</span>
+                                <span>潜力员工(70-79)</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full">
+                                <span>🔄</span>
+                                <span>优秀员工(60-69)</span>
+                            </div>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full font-semibold">
+                                <span>📊</span>
+                                <span>站点平均: 80.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <select id="periodSelect" class="px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm">
+                            <option value="week">📅 本周</option>
+                            <option value="month" selected>📅 本月</option>
+                            <option value="quarter">📅 本季度</option>
+                            <option value="year">📅 本年度</option>
+                        </select>
+                        <div class="flex bg-gray-100 rounded-xl p-1 shadow-inner">
+                            <button id="tab-overview" class="tab-btn px-4 py-2 rounded-lg transition-all duration-200 bg-white text-blue-600 shadow-sm font-medium">总览</button>
+                            <button id="tab-cards" class="tab-btn px-4 py-2 rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-white/50">效率卡</button>
+                            <button id="tab-advanced" class="tab-btn px-4 py-2 rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-white/50">高阶指标</button>
+                            <button id="tab-departments" class="tab-btn px-4 py-2 rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-white/50">部门对比</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <nav id="navTabs" style="display: none;">
-                <div class="nav-tabs">
-                    <button class="nav-tab" onclick="showSection('dashboard', this)">数据看板</button>
-                    <button class="nav-tab" onclick="showSection('tasks', this)">任务管理</button>
-                    <button class="nav-tab" onclick="showSection('inventory', this)">盘点提交</button>
-                </div>
-            </nav>
-            <nav id="adminNavTabs" style="display: none;">
-                <div class="nav-tabs">
-                    <button class="nav-tab" onclick="showSection('adminDashboard', this)">管理总览</button>
-                    <button class="nav-tab" onclick="showSection('siteManagement', this)">站点管理</button>
-                    <button class="nav-tab" onclick="showSection('taskMonitor', this)">任务监控</button>
-                    <button class="nav-tab" onclick="showSection('reports', this)">数据报表</button>
-                </div>
-            </nav>
-        </header>
+        </div>
 
-        <!-- 登录页面 -->
-        <section id="loginSection" class="content-section active">
-            <div class="login-form">
-                <h2 style="text-align: center; margin-bottom: 30px; color: #333;">系统登录</h2>
-                <div class="form-group">
-                    <label for="username">用户名</label>
-                    <input type="text" id="username" placeholder="admin 或 site" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">密码</label>
-                    <input type="password" id="password" placeholder="任意密码" required>
-                </div>
-                <div class="form-group">
-                    <label for="userType">用户类型</label>
-                    <select id="userType" onchange="toggleSiteSelect()">
-                        <option value="site">站点组长</option>
-                        <option value="admin">系统管理员</option>
-                    </select>
-                </div>
-                <div class="form-group" id="siteSelectGroup">
-                    <label for="siteSelect">选择站点</label>
-                    <select id="siteSelect">
-                        <option value="">请选择站点</option>
-                        <option value="sh">上海站点</option>
-                        <option value="bj">北京站点</option>
-                        <option value="gz">广州站点</option>
-                        <option value="sz">深圳站点</option>
-                    </select>
-                </div>
-                <button type="button" class="btn btn-primary" onclick="login()" style="width: 100%;">登录</button>
-            </div>
-        </section>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-8 fade-in" id="kpiCards">
+            <!-- KPI cards will be generated by JavaScript -->
+        </div>
 
-        <!-- 管理员 - 总览 -->
-        <section id="adminDashboard" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">管理总览</h2>
-            <div class="stats-grid">
-                 <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>总站点数</h3><div class="stat-value">4</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);"><h3>正常运行</h3><div class="stat-value">3</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9a1a 100%);"><h3>今日总收入</h3><div class="stat-value">¥116.6K</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);"><h3>活跃任务</h3><div class="stat-value">47</div></div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div class="chart-container">
-                    <h3 style="margin-bottom: 15px;">各站点收入对比</h3>
-                    <canvas id="sitePerformanceChart" width="400" height="300"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3 style="margin-bottom: 15px;">收入分布</h3>
-                    <canvas id="revenueDistributionChart" width="400" height="300"></canvas>
-                </div>
-            </div>
-        </section>
+        <!-- Main Content -->
+        <div id="mainContent" class="slide-in-up">
+            <!-- Content will be loaded based on active tab -->
+        </div>
 
-        <!-- 管理员 - 站点管理 -->
-        <section id="siteManagement" class="content-section">
-            <h2 style="text-align:center; color: #888; padding: 50px;">站点管理页面 (待开发)</h2>
-        </section>
-
-        <!-- 管理员 - 任务监控 -->
-        <section id="taskMonitor" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">任务监控</h2>
-             <div class="stats-grid">
-                 <div class="stat-card" style="background: linear-gradient(135deg, #09203F 0%, #537895 100%);"><h3>总任务数</h3><div class="stat-value">47</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);"><h3>已完成</h3><div class="stat-value">23</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9a1a 100%);"><h3>进行中</h3><div class="stat-value">18</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #f74d5f 100%);"><h3>已逾期</h3><div class="stat-value">6</div></div>
-             </div>
-            <table class="table">
-                <thead><tr><th>任务名称</th><th>站点</th><th>负责人</th><th>状态</th><th>截止日期</th><th>操作</th></tr></thead>
-                <tbody>
-                    <tr><td>2025年Q2季度安全巡检</td><td>上海站点</td><td>张经理</td><td><span class="task-status status-pending">进行中</span></td><td>2025-06-15</td><td><button class="btn btn-sm btn-info" onclick="openTaskModal('2025年Q2季度安全巡检')">查看详情</button></td></tr>
-                    <tr><td>月度设备维护</td><td>北京站点</td><td>李主管</td><td><span class="task-status status-completed">已完成</span></td><td>2025-06-10</td><td><button class="btn btn-sm btn-info" onclick="openTaskModal('月度设备维护')">查看详情</button></td></tr>
-                    <tr><td>服务器升级</td><td>广州站点</td><td>王工</td><td><span class="task-status status-overdue">已逾期</span></td><td>2025-06-08</td><td><button class="btn btn-sm btn-info" onclick="openTaskModal('服务器升级')">查看详情</button></td></tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- 管理员 - 数据报表 -->
-        <section id="reports" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">数据报表</h2>
-            <div id="reportPlaceholder">
-                <div class="controls-bar">
-                    <div class="form-group"><label>报表类型:</label><select id="reportType"><option value="">请选择报表类型</option><option value="revenue">收入报表</option><option value="task">任务统计报表</option><option value="inventory">库存报表</option></select></div>
-                    <div class="form-group"><label>时间范围:</label><select id="reportPeriod"><option value="week">本周</option><option value="month">本月</option><option value="quarter">本季度</option></select></div>
-                    <button class="btn btn-primary" onclick="generateReport()">生成报表</button>
+        <!-- Employee Modal -->
+        <div id="employeeModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 hidden backdrop-blur-sm">
+            <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+                <div class="p-6 custom-scrollbar overflow-y-auto max-h-[90vh]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">👤 员工效率详细分析</h2>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl p-2 hover:bg-gray-100 rounded-lg transition-colors">✕</button>
+                    </div>
+                    <div id="modalContent">
+                        <!-- Modal content will be loaded by JavaScript -->
+                    </div>
                 </div>
             </div>
-            <div id="reportContent" class="hidden">
-                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 id="reportTitle"></h3>
-                    <button class="btn btn-secondary btn-sm" onclick="backToReportSelection()">返回重新选择</button>
-                 </div>
-                 <div class="chart-container"><canvas id="reportTrendChart" width="400" height="200"></canvas></div>
-                 <table class="table" id="reportTable"></table>
-            </div>
-        </section>
+        </div>
 
-        <!-- 站点用户 - 数据看板 -->
-        <section id="dashboard" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">数据看板</h2>
-            <div class="stats-grid">
-                 <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>今日收入</h3><div class="stat-value">¥25,680</div><small style="opacity: 0.8;">比昨日 +8.5%</small></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"><h3>本周收入</h3><div class="stat-value">¥178,680</div><small style="opacity: 0.8;">目标完成率 89%</small></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"><h3>活跃任务</h3><div class="stat-value">12</div><small style="opacity: 0.8;">进行中: 6 | 逾期: 1</small></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"><h3>库存状态</h3><div class="stat-value">正常</div><small style="opacity: 0.8;">最后盘点: 6月8日</small></div>
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-40 hidden">
+            <div class="text-center">
+                <div class="loading mx-auto mb-4"></div>
+                <p class="text-gray-600 font-medium">数据加载中...</p>
             </div>
-            <div class="chart-container">
-                <h3 style="margin-bottom: 15px;">收入成本趋势 (近7天)</h3>
-                <canvas id="trendChart" width="400" height="200"></canvas>
-            </div>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px;">
-                <div class="chart-container">
-                    <h3 style="margin-bottom: 15px;">近期任务状态</h3>
-                    <table class="table">
-                        <thead><tr><th>任务名称</th><th>状态</th><th>截止日期</th></tr></thead>
-                        <tbody>
-                            <tr><td>安全巡检</td><td><span class="task-status status-pending">进行中</span></td><td>2025-06-15</td></tr>
-                            <tr><td>设备维护</td><td><span class="task-status status-completed">已完成</span></td><td>2025-06-10</td></tr>
-                            <tr><td>库存盘点</td><td><span class="task-status status-overdue">逾期</span></td><td>2025-06-08</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="chart-container">
-                    <h3 style="margin-bottom: 15px;">系统状态</h3>
-                    <ul class="activity-feed">
-                        <li class="feed-item"><span class="status-light status-online">●</span> 系统运行正常<small>5分钟前</small></li>
-                        <li class="feed-item"><span class="status-light status-warning">●</span> 库存预警提醒<small>2小时前</small></li>
-                        <li class="feed-item"><span class="status-light status-online">●</span> 数据同步完成<small>1天前</small></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-        
-        <!-- 站点用户 - 任务管理 -->
-        <section id="tasks" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">我的任务管理</h2>
-            <div class="stats-grid">
-                 <div class="stat-card" style="background: linear-gradient(135deg, #09203F 0%, #537895 100%);"><h3>我的任务总数</h3><div class="stat-value">12</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);"><h3>已完成</h3><div class="stat-value">5</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9a1a 100%);"><h3>进行中</h3><div class="stat-value">6</div></div>
-                 <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #f74d5f 100%);"><h3>已逾期</h3><div class="stat-value">1</div></div>
-            </div>
-            <div class="controls-bar">
-                <div class="form-group"><label>筛选状态:</label><select onchange="filterSiteTasks(this.value)"><option value="all">所有状态</option><option value="pending">进行中</option><option value="completed">已完成</option><option value="overdue">已逾期</option></select></div>
-                <div class="form-group"><label>优先级:</label><select onchange="filterSiteTasksByPriority(this.value)"><option value="all">所有优先级</option><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select></div>
-                <input type="text" placeholder="搜索任务标题..." onkeyup="searchSiteTasks(this.value)" style="width: 250px; padding: 12px; border-radius: 10px; border: 2px solid #e1e8ed;">
-            </div>
-            <div id="siteTaskList" class="task-card-container">
-                <!-- 任务卡片将由JS动态生成 -->
-            </div>
-        </section>
+        </div>
 
-        <!-- 站点用户 - 盘点提交 -->
-        <section id="inventory" class="content-section">
-            <h2 style="margin-bottom: 20px; color: #333;">盘点批次提交</h2>
-            <div class="form-group">
-                <label for="inventoryDate">盘点日期</label>
-                <input type="date" id="inventoryDate">
-            </div>
-            <table class="table" id="inventoryBatchTable">
-                <thead><tr><th>物料编码</th><th>物料名称</th><th>单位</th><th>账面数量</th><th>实盘数量</th><th>差异</th><th>操作</th></tr></thead>
-                <tbody>
-                    <!-- 盘点行将由JS动态生成 -->
-                </tbody>
-            </table>
-            <div style="margin-top: 20px; display:flex; gap: 15px;">
-                 <button class="btn btn-secondary" onclick="addInventoryRow()">+ 新增一行</button>
-                 <button class="btn btn-success">提交盘点</button>
-            </div>
-        </section>
-    </div>
-
-    <!-- 任务详情模态框 -->
-    <div id="taskModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTaskTitle"></h3>
-                <button class="modal-close" onclick="closeTaskModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p><strong>任务描述:</strong> <span id="modalTaskDescription"></span></p>
-                <p><strong>截止日期:</strong> <span id="modalTaskDueDate"></span></p>
-                <p><strong>优先级:</strong> <span id="modalTaskPriority"></span></p>
-                <hr style="margin: 20px 0;">
-                <h4>任务更新记录</h4>
-                <div class="task-updates" id="modalTaskUpdates">
-                    <!-- 更新记录将动态添加 -->
+        <!-- Footer -->
+        <div class="mt-12 glass-effect rounded-2xl shadow-lg p-6 fade-in">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center text-sm text-gray-600">
+                <div class="mb-4 lg:mb-0">
+                    <p class="flex items-center gap-2 mb-2">
+                        <span class="text-green-500">🔄</span>
+                        <span>数据更新时间: <span id="updateTime" class="font-medium text-gray-800"></span></span>
+                        <span class="mx-2">|</span>
+                        <span>评分标准: 高阶指标体系</span>
+                    </p>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        📊 指标说明: <span class="font-medium">EER=效率评级</span> | 
+                        <span class="font-medium">VORP=替代价值</span> | 
+                        <span class="font-medium">PER=综合效率</span> | 
+                        <span class="font-medium text-blue-600">站点平均=80.0分</span>
+                    </p>
                 </div>
-                <div class="form-group" style="margin-top: 20px;">
-                    <label>添加新更新</label>
-                    <textarea placeholder="输入任务进展..." style="height: 80px;"></textarea>
+                <div class="text-left lg:text-right">
+                    <p class="font-semibold text-gray-800 mb-1">🎯 本月目标: 全站平均分≥82</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm">当前进度:</span>
+                        <span id="progress" class="font-bold text-green-600"></span>
+                        <div class="w-20 bg-gray-200 rounded-full h-2">
+                            <div id="progressBar" class="bg-green-500 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeTaskModal()">关闭</button>
-                <button class="btn btn-primary">保存更新</button>
             </div>
         </div>
     </div>
 
-
     <script>
-        // --- 全局变量和模拟数据 ---
-        let activeCharts = []; // 存储当前活动的图表实例
-        
-        // 模拟站点用户的任务数据
-        const mockSiteTasks = [
-            { id: 1, title: '2025年Q2季度安全巡检', description: '请在本周内完成对仓库所有区域的消防和电气安全巡检，并提交报告。', status: 'pending', priority: 'high', dueDate: '2025-06-15' },
-            { id: 2, title: '月度设备维护', description: '对所有传送带和分拣机进行润滑和检查。', status: 'completed', priority: 'medium', dueDate: '2025-06-10' },
-            { id: 3, title: '新员工入职培训', description: '为三位新同事进行安全操作和流程培训。', status: 'pending', priority: 'medium', dueDate: '2025-06-18' },
-            { id: 4, title: '库存盘点', description: '对A区-01至A区-05货架的商品进行全面盘点。', status: 'overdue', priority: 'high', dueDate: '2025-06-08' },
-            { id: 5, title: '处理客户投诉 #1024', description: '跟进客户关于包裹延迟的投诉，并给出解决方案。', status: 'pending', priority: 'high', dueDate: '2025-06-12' },
-            { id: 6, title: '清理消防通道', description: '确保所有消防通道畅通无阻，移除杂物。', status: 'completed', priority: 'low', dueDate: '2025-06-09' },
+        // 数据定义
+        const departmentAverages = {
+            '蚌埠站': 85.0,
+            '服务部': 75.5,
+            '北京站': 88.2,
+            '合肥站': 78.0
+        };
+
+        const leagueAverage = 80.0;
+
+        const employeeData = [
+            { 
+                name: '张三', position: '站点维修工', totalScore: 95.05, rank: 1, level: 'MVP', 
+                基础技能: 28.5, 执行能力: 23.8, 运营效率: 24.2, 综合贡献: 18.5,
+                department: '蚌埠站', avatar: '👨‍🔧', workExperience: '3年',
+                monthlyTrend: [88, 91, 93, 95.05], specialties: ['维修精准', '技术创新', '团队协作']
+            },
+            { 
+                name: '李四', position: '站点组长', totalScore: 89.20, rank: 2, level: '明星员工', 
+                基础技能: 26.8, 执行能力: 21.5, 运营效率: 23.9, 综合贡献: 17.0,
+                department: '北京站', avatar: '📦', workExperience: '2年',
+                monthlyTrend: [85, 87, 88, 89.20], specialties: ['库存优化', '成本控制', '数据分析']
+            },
+            { 
+                name: '王五', position: '站点维修工学徒', totalScore: 78.40, rank: 3, level: '最有潜力员工', 
+                基础技能: 24.2, 执行能力: 19.1, 运营效率: 19.5, 综合贡献: 15.6,
+                department: '服务部', avatar: '🛠️', workExperience: '1.5年',
+                monthlyTrend: [75, 76, 77, 78.40], specialties: ['客户沟通', '应急抢修']
+            },
+            { 
+                name: '赵六', position: '站点维修工', totalScore: 82.15, rank: 4, level: '明星员工', 
+                基础技能: 25.0, 执行能力: 20.5, 运营效率: 20.8, 综合贡献: 15.85,
+                department: '蚌埠站', avatar: '👨‍🔧', workExperience: '4年',
+                monthlyTrend: [80, 81, 81.5, 82.15], specialties: ['设备维修', '故障诊断']
+            },
+            { 
+                name: '钱七', position: '站点组长', totalScore: 79.80, rank: 5, level: '最有潜力组长', 
+                基础技能: 23.5, 执行能力: 19.8, 运营效率: 20.2, 综合贡献: 16.3,
+                department: '合肥站', avatar: '👷‍♂️', workExperience: '2.5年',
+                monthlyTrend: [77, 78, 79, 79.80], specialties: ['现场管理', '安全监督']
+            },
+            { 
+                name: '孙八', position: '站点维修工', totalScore: 74.60, rank: 6, level: 'MVP备选', 
+                基础技能: 22.8, 执行能力: 18.2, 运营效率: 18.0, 综合贡献: 15.6,
+                department: '服务部', avatar: '🛠️', workExperience: '1年',
+                monthlyTrend: [70, 72, 73, 74.60], specialties: ['学习能力强', '积极进取']
+            }
         ];
 
-        // --- 核心功能：页面导航和登录 ---
-
-        // 页面加载时执行的初始化函数
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('inventoryDate').valueAsDate = new Date();
-            renderSiteTasks(); // 初始加载站点任务列表
-            addInventoryRow('SN-001', '标准纸箱', '个', 1200);
-            addInventoryRow('SN-002', '缓冲气泡膜', '卷', 300);
-        });
-
-        // 切换用户类型时，控制站点选择框的显示和隐藏
-        function toggleSiteSelect() {
-            const userType = document.getElementById('userType').value;
-            const siteSelectGroup = document.getElementById('siteSelectGroup');
-            siteSelectGroup.style.display = userType === 'site' ? 'block' : 'none';
-        }
-
-        // 登录功能
-        function login() {
-            const userType = document.getElementById('userType').value;
-            const username = document.getElementById('username').value;
-            const siteSelect = document.getElementById('siteSelect');
-
-            if (userType === 'site' && !siteSelect.value) {
-                alert('请选择一个站点');
-                return;
+        const departmentData = [
+            { 
+                department: '蚌埠站', avgScore: 85.0, employees: 8, mvpCount: 2, 
+                主要职责: '维修/保养', topPerformer: '张三', efficiency: 106.3, trending: 'up'
+            },
+            { 
+                department: '北京站', avgScore: 88.2, employees: 4, mvpCount: 1, 
+                主要职责: '库存管理', topPerformer: '李四', efficiency: 110.3, trending: 'up'
+            },
+            { 
+                department: '服务部', avgScore: 75.5, employees: 6, mvpCount: 0, 
+                主要职责: '客户服务', topPerformer: '王五', efficiency: 94.4, trending: 'down'
+            },
+            { 
+                department: '合肥站', avgScore: 78.0, employees: 3, mvpCount: 0, 
+                主要职责: '现场管理', topPerformer: '钱七', efficiency: 97.5, trending: 'stable'
             }
+        ];
 
-            // 更新用户信息显示
-            const currentUserSpan = document.getElementById('currentUser');
-            if (userType === 'admin') {
-                currentUserSpan.textContent = `管理员 (${username})`;
-            } else {
-                const selectedSiteName = siteSelect.options[siteSelect.selectedIndex].text;
-                currentUserSpan.textContent = `${selectedSiteName}组长 (${username})`;
-            }
-            document.getElementById('userInfo').classList.remove('hidden');
+        const kpiData = [
+            { name: '服务态度', value: 92, target: 90, color: '#10B981', icon: '😊', unit: '%', desc: '🎯 零投诉率' },
+            { name: '及时接单', value: 88, target: 95, color: '#F59E0B', icon: '📞', unit: '%', desc: '⏰ 预约单接单' },
+            { name: '维修准确率', value: 95, target: 92, color: '#10B981', icon: '🔧', unit: '%', desc: '🎯 抛锚率控制' },
+            { name: '安全指标', value: 98, target: 95, color: '#10B981', icon: '🛡️', unit: '%', desc: '🏆 零事故率' },
+            { name: '库存准确率', value: 94, target: 98, color: '#EF4444', icon: '📦', unit: '%', desc: '📊 盘点准确性' },
+            { name: '成本控制', value: 85, target: 88, color: '#F59E0B', icon: '💰', unit: '%', desc: '💡 预算控制' }
+        ];
 
-            // 隐藏登录页面
-            document.getElementById('loginSection').classList.remove('active');
-
-            // 根据用户类型显示对应的导航和默认页面
-            if (userType === 'admin') {
-                document.getElementById('adminNavTabs').style.display = 'block';
-                showSection('adminDashboard', document.querySelector('#adminNavTabs .nav-tab'));
-            } else {
-                document.getElementById('navTabs').style.display = 'block';
-                showSection('dashboard', document.querySelector('#navTabs .nav-tab'));
-            }
-        }
-        
-        // 退出登录
-        function logout() {
-             // 隐藏所有内容区域和导航栏
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('navTabs').style.display = 'none';
-            document.getElementById('adminNavTabs').style.display = 'none';
-            document.getElementById('userInfo').classList.add('hidden');
-
-            // 显示登录页面
-            document.getElementById('loginSection').classList.add('active');
+        // 工具函数
+        function calculateAdvancedStats(employee) {
+            const deptAvg = departmentAverages[employee.department];
+            const EER = (employee.totalScore / deptAvg) * 100;
+            const VORP = EER - 100;
+            const PER = (employee.totalScore / leagueAverage) * 100;
             
-            // 清理输入框
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            return { 
+                EER: EER.toFixed(1), 
+                VORP: VORP.toFixed(1), 
+                PER: PER.toFixed(1) 
+            };
         }
 
-        // 显示指定ID的区块，并处理导航栏样式和图表
-        function showSection(sectionId, clickedTab) {
-            // 销毁旧的图表实例，防止内存泄漏
-            activeCharts.forEach(chart => chart.destroy());
-            activeCharts = [];
-
-            // 隐藏所有内容区域
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // 移除所有导航标签的 'active' 样式
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 显示目标区域并激活对应的导航标签
-            document.getElementById(sectionId).classList.add('active');
-            if (clickedTab) {
-                clickedTab.classList.add('active');
-            }
-
-            // 根据显示的区块ID，初始化对应的图表
-            switch (sectionId) {
-                case 'dashboard':
-                    initDashboardCharts();
-                    break;
-                case 'adminDashboard':
-                    initAdminDashboardCharts();
-                    break;
+        function getLevelColor(level) {
+            switch(level) {
+                case 'MVP': return 'gradient-bg-mvp';
+                case '明星员工': return 'gradient-bg-star';
+                case '最有潜力员工': case '最有潜力组长': return 'gradient-bg-potential';
+                case '优秀员工': return 'gradient-bg-good';
+                default: return 'gradient-bg-default';
             }
         }
 
-        // --- 图表初始化函数 ---
+        function getLevelIcon(level) {
+            switch(level) {
+                case 'MVP': return '🏆';
+                case '明星员工': return '⭐';
+                case '最有潜力员工': case '最有潜力组长': return '🎯';
+                default: return '🔄';
+            }
+        }
 
-        // 初始化站点用户仪表盘的图表
-        function initDashboardCharts() {
-            const trendCtx = document.getElementById('trendChart').getContext('2d');
-            const trendChart = new Chart(trendCtx, {
-                type: 'line',
+        function getTrendIcon(trending) {
+            switch(trending) {
+                case 'up': return '<span class="text-green-500">📈</span>';
+                case 'down': return '<span class="text-red-500">📉</span>';
+                default: return '<span class="text-yellow-500">➖</span>';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        // 数字动画函数
+        function animateNumber(element, target, duration = 1000) {
+            const start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = start + (target - start) * progress;
+                
+                element.textContent = current.toFixed(1);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // 渲染函数
+        function renderKPICards() {
+            const container = document.getElementById('kpiCards');
+            container.innerHTML = kpiData.map((kpi, index) => `
+                <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6 card-hover border border-gray-100" style="animation-delay: ${index * 0.1}s">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${kpi.icon}</span>
+                            <span class="text-sm font-semibold text-gray-700">${kpi.name}</span>
+                        </div>
+                        <div class="status-indicator ${kpi.value >= kpi.target ? 'status-up' : 'status-down'}">
+                            ${kpi.value >= kpi.target ? '📈' : '📉'}
+                        </div>
+                    </div>
+                    <div class="text-3xl font-bold text-gray-800 mb-2 count-up">${kpi.value}${kpi.unit}</div>
+                    <div class="text-xs text-gray-500 mb-3">🎯 目标: ${kpi.target}${kpi.unit}</div>
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+                        <div class="h-3 rounded-full progress-bar transition-all duration-1000 ease-out" 
+                             style="width: ${Math.min(kpi.value, 100)}%; background-color: ${kpi.color}"></div>
+                    </div>
+                    <div class="text-xs text-gray-600">${kpi.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderOverviewTab() {
+            return `
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <!-- Top Performers -->
+                    <div class="xl:col-span-2 bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">🏆 个人排名 vs 部门平均</h2>
+                            <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">💡 点击查看详细分析</div>
+                        </div>
+                        <div class="space-y-4">
+                            ${employeeData.map((employee, index) => {
+                                const deptAvg = departmentAverages[employee.department];
+                                const vsDept = ((employee.totalScore / deptAvg - 1) * 100).toFixed(1);
+                                return `
+                                    <div class="flex items-center justify-between p-4 md:p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-blue-50 hover:to-blue-100 transition-all duration-300 cursor-pointer employee-card border border-gray-200 hover:border-blue-300 hover:shadow-lg" data-employee="${index}">
+                                        <div class="flex items-center gap-4">
+                                            <div class="text-3xl md:text-4xl">${employee.avatar}</div>
+                                            <div>
+                                                <div class="flex items-center gap-3 mb-2">
+                                                    <span class="font-bold text-gray-800 text-lg">${employee.name}</span>
+                                                    <span class="px-3 py-1 text-xs text-white rounded-full ${getLevelColor(employee.level)} shadow-sm">
+                                                        ${employee.level}
+                                                    </span>
+                                                    <span class="text-sm text-gray-600 bg-white px-2 py-1 rounded-lg">${employee.department}</span>
+                                                </div>
+                                                <div class="text-sm text-gray-600 flex items-center gap-4">
+                                                    <span>👤 个人: <span class="font-semibold text-blue-600">${employee.totalScore}</span></span>
+                                                    <span>📊 部门均: <span class="font-medium">${deptAvg}</span></span>
+                                                    <span class="font-bold ${parseFloat(vsDept) > 0 ? 'text-green-600' : 'text-red-600'}">
+                                                        ${parseFloat(vsDept) > 0 ? '📈 +' : '📉 '}${Math.abs(parseFloat(vsDept))}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <div class="text-right">
+                                                <div class="text-3xl font-bold text-gray-800">${employee.totalScore}</div>
+                                                <div class="text-sm text-gray-500">🏅 排名 #${employee.rank}</div>
+                                            </div>
+                                            <div class="text-2xl pulse-animation">${getLevelIcon(employee.level)}</div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Department Efficiency -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 部门效率排名</h2>
+                        <div class="space-y-6">
+                            ${departmentData
+                                .sort((a, b) => b.efficiency - a.efficiency)
+                                .map((dept, index) => `
+                                <div class="border-l-4 border-gradient-to-b from-blue-400 to-blue-600 pl-6 bg-gradient-to-r from-blue-50 to-transparent p-4 rounded-r-xl">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <span class="font-bold text-gray-800 text-lg">${dept.department}</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-lg font-bold text-blue-600">${dept.efficiency}</span>
+                                            ${getTrendIcon(dept.trending)}
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-3 bg-white px-2 py-1 rounded-lg inline-block">
+                                        🏢 ${dept.主要职责}
+                                    </div>
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <span class="text-2xl font-bold text-gray-800">${dept.avgScore}</span>
+                                        <span class="text-sm text-gray-600">平均分</span>
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full progress-bar" style="width: ${(dept.avgScore / 100) * 100}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <div class="flex items-center gap-2 bg-yellow-100 px-3 py-1 rounded-full">
+                                            <span class="text-lg">🏆</span>
+                                            <span class="text-yellow-800 font-medium">${dept.mvpCount}名MVP</span>
+                                        </div>
+                                        <span class="text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded-lg">👑 王牌: ${dept.topPerformer}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEfficiencyCard(employee) {
+            const deptAvg = departmentAverages[employee.department];
+            const advancedStats = calculateAdvancedStats(employee);
+            const vsLeague = ((employee.totalScore / leagueAverage - 1) * 100).toFixed(1);
+            const vsDept = ((employee.totalScore / deptAvg - 1) * 100).toFixed(1);
+
+            return `
+                <div class="bg-white rounded-2xl shadow-xl border-2 border-blue-200 p-6 md:p-8 card-hover">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="text-4xl md:text-5xl">${employee.avatar}</div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-800 mb-1">${employee.name}</h3>
+                                <p class="text-gray-600 mb-1">${employee.position} | ${employee.department}</p>
+                                <p class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-lg inline-block">
+                                    🕒 工作经验: ${employee.workExperience}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-bold text-blue-600 mb-2">${employee.totalScore}</div>
+                            <div class="px-4 py-2 text-sm text-white rounded-full ${getLevelColor(employee.level)} shadow-lg">
+                                ${employee.level}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 对比分析 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                            <div class="text-sm text-blue-700 font-medium mb-2">🏢 vs 部门平均</div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl font-bold text-blue-600">${employee.totalScore}</span>
+                                <span class="text-gray-500">vs</span>
+                                <span class="text-xl font-medium text-gray-700">${deptAvg}</span>
+                                <span class="px-2 py-1 text-sm font-bold rounded-full ${parseFloat(vsDept) > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                    ${parseFloat(vsDept) > 0 ? '📈 +' : '📉 '}${Math.abs(parseFloat(vsDept))}%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                            <div class="text-sm text-green-700 font-medium mb-2">🏆 vs 站点平均</div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-2xl font-bold text-green-600">${employee.totalScore}</span>
+                                <span class="text-gray-500">vs</span>
+                                <span class="text-xl font-medium text-gray-700">${leagueAverage}</span>
+                                <span class="px-2 py-1 text-sm font-bold rounded-full ${parseFloat(vsLeague) > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                    ${parseFloat(vsLeague) > 0 ? '📈 +' : '📉 '}${Math.abs(parseFloat(vsLeague))}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 高阶指标 -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                            <div class="text-sm text-purple-700 font-medium mb-1">EER</div>
+                            <div class="text-2xl font-bold text-purple-600 mb-1">${advancedStats.EER}</div>
+                            <div class="text-xs text-purple-600 bg-purple-200 px-2 py-1 rounded-full">效率评级</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl border border-orange-200">
+                            <div class="text-sm text-orange-700 font-medium mb-1">VORP</div>
+                            <div class="text-2xl font-bold text-orange-600 mb-1">${advancedStats.VORP}</div>
+                            <div class="text-xs text-orange-600 bg-orange-200 px-2 py-1 rounded-full">替代价值</div>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl border border-teal-200">
+                            <div class="text-sm text-teal-700 font-medium mb-1">PER</div>
+                            <div class="text-2xl font-bold text-teal-600 mb-1">${advancedStats.PER}</div>
+                            <div class="text-xs text-teal-600 bg-teal-200 px-2 py-1 rounded-full">综合效率</div>
+                        </div>
+                    </div>
+
+                    <!-- 专长标签 -->
+                    <div class="mb-6">
+                        <div class="text-sm text-gray-700 font-medium mb-3">🌟 专长领域:</div>
+                        <div class="flex flex-wrap gap-2">
+                            ${employee.specialties.map(specialty => 
+                                `<span class="px-3 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-sm rounded-full font-medium border border-blue-300 hover:shadow-md transition-shadow">
+                                    ${specialty}
+                                </span>`
+                            ).join('')}
+                        </div>
+                    </div>
+
+                    <!-- 评价总结 -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl">
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                <span class="font-bold text-blue-600">${employee.name}</span> 的综合评分为 
+                                <span class="font-bold text-blue-600 text-lg">${employee.totalScore}</span>，
+                                ${parseFloat(vsDept) > 0 ? '🎉 高于' : '📉 低于'}部门平均 
+                                <span class="font-bold">${deptAvg}</span> 分，
+                                整体表现${parseFloat(vsDept) > 10 ? '🌟 出色' : parseFloat(vsDept) > 0 ? '👍 良好' : '⚠️ 需要改进'}。
+                                在团队中排名第 <span class="font-bold text-orange-600">${employee.rank}</span> 位。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCardsTab() {
+            return `
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    ${employeeData.map(employee => renderEfficiencyCard(employee)).join('')}
+                </div>
+            `;
+        }
+
+        function renderAdvancedTab() {
+            return `
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <!-- Advanced Stats Chart -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">🏀 高阶指标散点分析</h2>
+                        <div class="h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 flex items-center justify-center border border-gray-200">
+                            <canvas id="advancedChart" width="400" height="300"></canvas>
+                        </div>
+                        <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                            <div class="text-sm text-gray-700 space-y-2">
+                                <p><span class="font-bold text-purple-600">🔢 EER (效率评级):</span> (个人得分 ÷ 部门平均) × 100，100为部门平均水平</p>
+                                <p><span class="font-bold text-orange-600">📊 VORP (替代价值):</span> EER - 100，衡量超越部门平均的程度</p>
+                                <p><span class="font-bold text-teal-600">⚡ PER (综合效率):</span> (个人得分 ÷ 站点平均) × 100，100为站点平均水平</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Stats Table -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">🏆 高阶指标排行榜</h2>
+                        <div class="space-y-4">
+                            ${employeeData
+                                .map(emp => ({ ...emp, ...calculateAdvancedStats(emp) }))
+                                .sort((a, b) => parseFloat(b.VORP) - parseFloat(a.VORP))
+                                .map((employee, index) => `
+                                <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-blue-50 hover:to-blue-100 transition-all duration-300 border border-gray-200 hover:border-blue-300 hover:shadow-lg">
+                                    <div class="flex items-center gap-4">
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-2xl">${employee.avatar}</span>
+                                            <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">#${index + 1}</span>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-gray-800 text-lg">${employee.name}</div>
+                                            <div class="text-sm text-gray-600 bg-white px-2 py-1 rounded-lg inline-block">
+                                                ${employee.department}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-6 text-center">
+                                        <div class="bg-white p-3 rounded-lg shadow-sm border border-purple-200">
+                                            <div class="text-lg font-bold text-purple-600">${employee.EER}</div>
+                                            <div class="text-xs text-purple-600 font-medium">EER</div>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg shadow-sm border border-orange-200">
+                                            <div class="text-lg font-bold text-orange-600">${employee.VORP}</div>
+                                            <div class="text-xs text-orange-600 font-medium">VORP</div>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg shadow-sm border border-teal-200">
+                                            <div class="text-lg font-bold text-teal-600">${employee.PER}</div>
+                                            <div class="text-xs text-teal-600 font-medium">PER</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDepartmentsTab() {
+            return `
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <!-- Department Comparison Chart -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">🏢 部门效率对比图表</h2>
+                        <div class="h-96 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 flex items-center justify-center border border-gray-200">
+                            <canvas id="departmentChart" width="400" height="300"></canvas>
+                        </div>
+                        <div class="mt-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border border-red-200">
+                            <div class="flex items-center justify-between text-sm text-gray-700 mb-3">
+                                <span class="font-medium">📊 站点平均基准线</span>
+                                <span class="font-bold text-red-600">${leagueAverage} 分</span>
+                            </div>
+                            <div class="w-full bg-red-200 h-3 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-red-400 to-red-600 h-3 rounded-full transition-all duration-1000" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department Details -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 部门详细分析报告</h2>
+                        <div class="space-y-6">
+                            ${departmentData.map((dept, index) => {
+                                const vsLeague = ((dept.avgScore / leagueAverage - 1) * 100).toFixed(1);
+                                return `
+                                    <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+                                        <div class="flex justify-between items-center mb-4">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-800">${dept.department}</h3>
+                                                <p class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full inline-block mt-1">
+                                                    🏢 ${dept.主要职责}
+                                                </p>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-3xl font-bold text-blue-600">${dept.avgScore}</div>
+                                                <div class="text-sm text-gray-600">
+                                                    vs站点平均 
+                                                    <span class="px-2 py-1 text-xs font-bold rounded-full ${parseFloat(vsLeague) > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                                        ${parseFloat(vsLeague) > 0 ? '📈 +' : '📉 '}${Math.abs(parseFloat(vsLeague))}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-3 gap-4 mb-4">
+                                            <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-200">
+                                                <div class="text-xl font-bold text-blue-600">${dept.employees}</div>
+                                                <div class="text-xs text-blue-600 font-medium">👥 总人数</div>
+                                            </div>
+                                            <div class="text-center p-3 bg-yellow-50 rounded-xl border border-yellow-200">
+                                                <div class="text-xl font-bold text-yellow-600">${dept.mvpCount}</div>
+                                                <div class="text-xs text-yellow-600 font-medium">🏆 MVP数</div>
+                                            </div>
+                                            <div class="text-center p-3 bg-green-50 rounded-xl border border-green-200">
+                                                <div class="text-xl font-bold text-green-600">${dept.efficiency}</div>
+                                                <div class="text-xs text-green-600 font-medium">⚡ 效率指数</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200">
+                                            <div class="text-sm text-gray-700">
+                                                👑 部门王牌: <span class="font-bold text-blue-600">${dept.topPerformer}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs text-gray-500 font-medium">📈 趋势:</span>
+                                                <div class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                    dept.trending === 'up' ? 'bg-green-100 text-green-700' :
+                                                    dept.trending === 'down' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
+                                                }">
+                                                    ${dept.trending === 'up' ? '📈 上升' :
+                                                      dept.trending === 'down' ? '📉 下降' : '➖ 稳定'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染主要内容
+        function renderMainContent(tab) {
+            showLoading();
+            
+            setTimeout(() => {
+                const mainContent = document.getElementById('mainContent');
+                mainContent.classList.remove('slide-in-up');
+                
+                switch(tab) {
+                    case 'overview':
+                        mainContent.innerHTML = renderOverviewTab();
+                        // 添加员工卡片点击事件
+                        document.querySelectorAll('.employee-card').forEach(card => {
+                            card.addEventListener('click', (e) => {
+                                const employeeIndex = parseInt(e.currentTarget.getAttribute('data-employee'));
+                                showEmployeeModal(employeeData[employeeIndex]);
+                            });
+                        });
+                        break;
+                    case 'cards':
+                        mainContent.innerHTML = renderCardsTab();
+                        break;
+                    case 'advanced':
+                        mainContent.innerHTML = renderAdvancedTab();
+                        // 渲染散点图
+                        setTimeout(() => renderAdvancedChart(), 100);
+                        break;
+                    case 'departments':
+                        mainContent.innerHTML = renderDepartmentsTab();
+                        // 渲染部门对比图
+                        setTimeout(() => renderDepartmentChart(), 100);
+                        break;
+                    default:
+                        mainContent.innerHTML = renderOverviewTab();
+                }
+                
+                // 重新添加动画类
+                setTimeout(() => {
+                    mainContent.classList.add('slide-in-up');
+                    hideLoading();
+                }, 100);
+            }, 300);
+        }
+
+        // 显示员工详情模态框
+        function showEmployeeModal(employee) {
+            const modal = document.getElementById('employeeModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                ${renderEfficiencyCard(employee)}
+                
+                <!-- Monthly Trend -->
+                <div class="mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">📈 月度表现趋势分析</h3>
+                    <div class="h-64 bg-white rounded-xl p-4 flex items-center justify-center border border-blue-300 shadow-inner">
+                        <canvas id="trendChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600 bg-white p-3 rounded-lg">
+                        <p>💡 <strong>趋势分析:</strong> 该员工近4个月持续进步，表现稳定向上，建议继续保持并给予更多发展机会。</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                    <button class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        📊 查看详细报告
+                    </button>
+                    <button class="flex-1 border-2 border-blue-600 text-blue-600 py-3 px-6 rounded-xl hover:bg-blue-50 transition-all duration-300 font-medium hover:shadow-lg transform hover:-translate-y-1">
+                        🎯 设置发展目标
+                    </button>
+                    <button class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-6 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        💬 一对一沟通
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            
+            // 渲染趋势图
+            setTimeout(() => renderTrendChart(employee.monthlyTrend), 200);
+        }
+
+        // 关闭模态框
+        function closeEmployeeModal() {
+            const modal = document.getElementById('employeeModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 渲染图表
+        function renderAdvancedChart() {
+            const canvas = document.getElementById('advancedChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = employeeData.map(emp => {
+                const stats = calculateAdvancedStats(emp);
+                return {
+                    x: parseFloat(stats.EER),
+                    y: parseFloat(stats.VORP),
+                    name: emp.name,
+                    department: emp.department
+                };
+            });
+
+            new Chart(ctx, {
+                type: 'scatter',
                 data: {
-                    labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-                    datasets: [
-                        { label: '收入(元)', data: [12000, 19000, 15000, 25000, 22000, 28000, 32000], borderColor: '#667eea', tension: 0.4, fill: false },
-                        { label: '成本(元)', data: [8000, 9000, 7000, 11000, 10000, 13000, 15000], borderColor: '#f5576c', tension: 0.4, fill: false }
-                    ]
+                    datasets: [{
+                        label: '员工效率分布',
+                        data: data,
+                        backgroundColor: function(context) {
+                            const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'];
+                            return colors[context.dataIndex % colors.length];
+                        },
+                        borderColor: '#1D4ED8',
+                        pointRadius: 10,
+                        pointHoverRadius: 12,
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                title: function(context) {
+                                    return `👤 ${data[context[0].dataIndex].name}`;
+                                },
+                                label: function(context) {
+                                    const point = context.parsed;
+                                    const employee = data[context.dataIndex];
+                                    return [
+                                        `🏢 部门: ${employee.department}`,
+                                        `📊 EER: ${point.x.toFixed(1)}`,
+                                        `⚡ VORP: ${point.y.toFixed(1)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'EER (效率评级)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#374151'
+                            },
+                            min: 80,
+                            max: 120,
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'VORP (替代价值)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#374151'
+                            },
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        }
+                    }
                 }
             });
-            activeCharts.push(trendChart);
         }
 
-        // 初始化管理员仪表盘的图表
-        function initAdminDashboardCharts() {
-            const perfCtx = document.getElementById('sitePerformanceChart').getContext('2d');
-            const perfChart = new Chart(perfCtx, {
+        function renderDepartmentChart() {
+            const canvas = document.getElementById('departmentChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['上海', '北京', '广州', '深圳'],
-                    datasets: [{ label: '收入(万元)', data: [45, 38, 22, 18], backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe'] }]
+                    labels: departmentData.map(d => d.department),
+                    datasets: [{
+                        label: '部门平均分',
+                        data: departmentData.map(d => d.avgScore),
+                        backgroundColor: function(context) {
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            gradient.addColorStop(0, '#3B82F6');
+                            gradient.addColorStop(1, '#1E40AF');
+                            return gradient;
+                        },
+                        borderColor: '#1D4ED8',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                title: function(context) {
+                                    return `🏢 ${context[0].label}`;
+                                },
+                                label: function(context) {
+                                    const dept = departmentData[context.dataIndex];
+                                    return [
+                                        `📊 平均分: ${context.parsed.y}`,
+                                        `👥 员工数: ${dept.employees}人`,
+                                        `🏆 MVP数: ${dept.mvpCount}人`,
+                                        `⚡ 效率指数: ${dept.efficiency}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 70,
+                            max: 95,
+                            title: {
+                                display: true,
+                                text: '平均分',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#374151'
+                            },
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
                 }
             });
-            activeCharts.push(perfChart);
+        }
+
+        function renderTrendChart(monthlyTrend) {
+            const canvas = document.getElementById('trendChart');
+            if (!canvas) return;
             
-            const distCtx = document.getElementById('revenueDistributionChart').getContext('2d');
-            const distChart = new Chart(distCtx, {
-                type: 'doughnut',
+            const ctx = canvas.getContext('2d');
+            
+            // 创建渐变
+            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+            
+            new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['上海', '北京', '广州', '深圳'],
-                    datasets: [{ data: [45, 38, 22, 18], backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe'] }]
-                }
-            });
-            activeCharts.push(distChart);
-        }
-
-        // --- 任务管理 (站点用户) ---
-        
-        // 渲染任务卡片列表
-        function renderSiteTasks(tasksToRender = mockSiteTasks) {
-            const taskListContainer = document.getElementById('siteTaskList');
-            taskListContainer.innerHTML = '';
-            tasksToRender.forEach(task => {
-                const priorityClass = `tag-priority-${task.priority}`;
-                const statusClass = `tag-status-${task.status}`;
-                const statusText = { pending: '进行中', completed: '已完成', overdue: '已逾期' }[task.status];
-
-                const card = `
-                <div class="task-card" data-status="${task.status}" data-priority="${task.priority}" data-title="${task.title.toLowerCase()}">
-                    <div class="task-card-header">
-                        <h4 class="task-card-title">${task.title}</h4>
-                        <div class="task-card-tags">
-                            <span class="tag ${priorityClass}">${{high:'高', medium:'中', low:'低'}[task.priority]}</span>
-                            <span class="tag ${statusClass}">${statusText}</span>
-                        </div>
-                    </div>
-                    <p class="task-card-description">${task.description}</p>
-                    <div class="task-card-footer">
-                        <span class="task-card-date">截止日期: ${task.dueDate}</span>
-                        <div class="task-card-actions">
-                            <button class="btn-sm btn-info" onclick="openTaskModal('${task.title}')">查看详情</button>
-                            ${task.status !== 'completed' ? `<button class="btn-sm btn-success">完成</button>` : ''}
-                        </div>
-                    </div>
-                </div>`;
-                taskListContainer.innerHTML += card;
-            });
-        }
-        
-        // 按状态筛选任务
-        function filterSiteTasks(status) {
-            const allTasks = document.querySelectorAll('#siteTaskList .task-card');
-            allTasks.forEach(task => {
-                const taskStatus = task.getAttribute('data-status');
-                if (status === 'all' || taskStatus === status) {
-                    task.style.display = 'flex';
-                } else {
-                    task.style.display = 'none';
-                }
-            });
-        }
-        
-        // 按优先级筛选任务
-        function filterSiteTasksByPriority(priority) {
-            const allTasks = document.querySelectorAll('#siteTaskList .task-card');
-            allTasks.forEach(task => {
-                const taskPriority = task.getAttribute('data-priority');
-                if (priority === 'all' || taskPriority === priority) {
-                    task.style.display = 'flex';
-                } else {
-                    task.style.display = 'none';
-                }
-            });
-        }
-
-        // 按标题搜索任务
-        function searchSiteTasks(searchTerm) {
-            const allTasks = document.querySelectorAll('#siteTaskList .task-card');
-            allTasks.forEach(task => {
-                const title = task.getAttribute('data-title');
-                if (title.includes(searchTerm.toLowerCase())) {
-                    task.style.display = 'flex';
-                } else {
-                    task.style.display = 'none';
+                    labels: ['1月', '2月', '3月', '4月'],
+                    datasets: [{
+                        label: '月度得分',
+                        data: monthlyTrend,
+                        borderColor: '#3B82F6',
+                        backgroundColor: gradient,
+                        borderWidth: 4,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#3B82F6',
+                        pointBorderColor: '#FFFFFF',
+                        pointBorderWidth: 3,
+                        pointHoverRadius: 10,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#374151',
+                            bodyColor: '#374151',
+                            borderColor: '#E5E7EB',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                title: function(context) {
+                                    return `📅 ${context[0].label}`;
+                                },
+                                label: function(context) {
+                                    return `📊 得分: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            min: 60,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: '得分',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#374151'
+                            },
+                            grid: {
+                                color: '#F3F4F6'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
                 }
             });
         }
 
-        // --- 模态框 (弹窗) ---
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            let activeTab = 'overview';
 
-        // 打开任务详情模态框
-        function openTaskModal(taskTitle) {
-            const task = mockSiteTasks.find(t => t.title === taskTitle) || {
-                title: taskTitle,
-                description: '暂无详细描述。',
-                dueDate: 'N/A',
-                priority: 'N/A'
-            };
+            // 初始化页面
+            renderKPICards();
+            renderMainContent(activeTab);
             
-            document.getElementById('modalTaskTitle').textContent = task.title;
-            document.getElementById('modalTaskDescription').textContent = task.description;
-            document.getElementById('modalTaskDueDate').textContent = task.dueDate;
-            document.getElementById('modalTaskPriority').textContent = task.priority;
+            // 更新时间
+            document.getElementById('updateTime').textContent = new Date().toLocaleString('zh-CN');
             
-            // 模拟更新记录
-            document.getElementById('modalTaskUpdates').innerHTML = `
-                <div class="update-item"><p>任务已创建</p><small>2025-06-01</small></div>
-                <div class="update-item"><p>负责人已分配</p><small>2025-06-02</small></div>
-            `;
+            // 计算并显示进度
+            const avgScore = (employeeData.reduce((sum, emp) => sum + emp.totalScore, 0) / employeeData.length).toFixed(1);
+            const progress = ((avgScore / 82) * 100).toFixed(1);
+            document.getElementById('progress').innerHTML = `${avgScore}分 (${progress}%)`;
             
-            document.getElementById('taskModal').classList.add('active');
-        }
+            // 更新进度条
+            setTimeout(() => {
+                document.getElementById('progressBar').style.width = `${Math.min(parseFloat(progress), 100)}%`;
+            }, 500);
 
-        // 关闭任务详情模态框
-        function closeTaskModal() {
-            document.getElementById('taskModal').classList.remove('active');
-        }
+            // 标签页切换
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // 更新标签页样式
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.className = 'tab-btn px-4 py-2 rounded-lg transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-white/50';
+                    });
+                    e.target.className = 'tab-btn px-4 py-2 rounded-lg transition-all duration-200 bg-white text-blue-600 shadow-sm font-medium';
+                    
+                    // 获取标签页ID
+                    const tabId = e.target.id.replace('tab-', '');
+                    activeTab = tabId;
+                    
+                    // 渲染内容
+                    renderMainContent(tabId);
+                });
+            });
 
+            // 关闭模态框
+            document.getElementById('closeModal').addEventListener('click', closeEmployeeModal);
 
-        // --- 盘点提交 ---
+            // 点击模态框外部关闭
+            document.getElementById('employeeModal').addEventListener('click', (e) => {
+                if (e.target.id === 'employeeModal') {
+                    closeEmployeeModal();
+                }
+            });
 
-        // 新增一行盘点记录
-        function addInventoryRow(code = '', name = '', unit = '个', expected = 0) {
-            const tableBody = document.querySelector('#inventoryBatchTable tbody');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><input type="text" value="${code}" placeholder="物料编码"></td>
-                <td><input type="text" value="${name}" placeholder="物料名称"></td>
-                <td><input type="text" value="${unit}" placeholder="单位"></td>
-                <td><input type="number" class="expected-qty" value="${expected}" placeholder="账面数" oninput="calculateDiscrepancy(this)"></td>
-                <td><input type="number" class="actual-qty" placeholder="实盘数" oninput="calculateDiscrepancy(this)"></td>
-                <td class="discrepancy-cell"></td>
-                <td><button class="btn-delete-row" onclick="deleteInventoryRow(this)">&times;</button></td>
-            `;
-            tableBody.appendChild(newRow);
-        }
-        
-        // 删除一行盘点记录
-        function deleteInventoryRow(button) {
-            button.closest('tr').remove();
-        }
+            // ESC键关闭模态框
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeEmployeeModal();
+                }
+            });
 
-        // 计算盘点差异
-        function calculateDiscrepancy(input) {
-            const row = input.closest('tr');
-            const expected = parseFloat(row.querySelector('.expected-qty').value) || 0;
-            const actual = parseFloat(row.querySelector('.actual-qty').value) || 0;
-            const discrepancyCell = row.querySelector('.discrepancy-cell');
-            
-            const diff = actual - expected;
-            
-            discrepancyCell.textContent = diff;
-            discrepancyCell.className = 'discrepancy-cell'; // Reset class
-            row.classList.remove('discrepancy-row');
+            // 添加键盘导航
+            document.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    const tabs = ['overview', 'cards', 'advanced', 'departments'];
+                    const tabIndex = parseInt(e.key) - 1;
+                    if (tabIndex < tabs.length) {
+                        document.getElementById(`tab-${tabs[tabIndex]}`).click();
+                    }
+                }
+            });
 
-            if (diff > 0) {
-                discrepancyCell.classList.add('discrepancy-positive');
-            } else if (diff < 0) {
-                discrepancyCell.classList.add('discrepancy-negative');
+            // 添加时间更新定时器
+            setInterval(() => {
+                document.getElementById('updateTime').textContent = new Date().toLocaleString('zh-CN');
+            }, 60000); // 每分钟更新一次
+
+            // 添加数字计数动画
+            document.querySelectorAll('.count-up').forEach(element => {
+                const target = parseFloat(element.textContent);
+                if (!isNaN(target)) {
+                    animateNumber(element, target);
+                }
+            });
+
+            // 添加性能监控
+            window.addEventListener('load', () => {
+                const loadTime = performance.now();
+                console.log(`页面加载完成，耗时: ${loadTime.toFixed(2)}ms`);
+            });
+
+            // 添加滚动优化
+            let ticking = false;
+            function updateScrollIndicator() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.body.offsetHeight;
+                const winHeight = window.innerHeight;
+                const scrollPercent = scrollTop / (docHeight - winHeight);
+                
+                // 可以在这里添加滚动指示器或其他滚动相关的效果
+                
+                ticking = false;
             }
-            if(diff !== 0) {
-                 row.classList.add('discrepancy-row');
-            }
-        }
 
-        // --- 数据报表 (管理员) ---
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(updateScrollIndicator);
+                    ticking = true;
+                }
+            });
 
-        let reportChartInstance = null;
-        function generateReport() {
-            const reportType = document.getElementById('reportType').value;
-            if (!reportType) {
-                alert('请选择报表类型');
-                return;
-            }
-
-            const reportPeriod = document.getElementById('reportPeriod').options[document.getElementById('reportPeriod').selectedIndex].text;
-            const reportTypeName = document.getElementById('reportType').options[document.getElementById('reportType').selectedIndex].text;
+            // 添加触摸支持
+            let startX = 0;
+            let startY = 0;
             
-            document.getElementById('reportPlaceholder').classList.add('hidden');
-            document.getElementById('reportContent').classList.remove('hidden');
-            document.getElementById('reportTitle').textContent = `${reportPeriod} - ${reportTypeName}`;
+            document.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            });
             
-            const table = document.getElementById('reportTable');
-            const ctx = document.getElementById('reportTrendChart').getContext('2d');
-            let chartData, tableHtml;
+            document.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const endY = e.changedTouches[0].clientY;
+                const diffX = startX - endX;
+                const diffY = startY - endY;
+                
+                // 水平滑动切换标签页
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    const tabs = ['overview', 'cards', 'advanced', 'departments'];
+                    const currentIndex = tabs.indexOf(activeTab);
+                    
+                    if (diffX > 0 && currentIndex < tabs.length - 1) {
+                        // 向左滑动，切换到下一个标签页
+                        document.getElementById(`tab-${tabs[currentIndex + 1]}`).click();
+                    } else if (diffX < 0 && currentIndex > 0) {
+                        // 向右滑动，切换到上一个标签页
+                        document.getElementById(`tab-${tabs[currentIndex - 1]}`).click();
+                    }
+                }
+            });
 
-            // 销毁旧图表
-            if(reportChartInstance) reportChartInstance.destroy();
+            // 添加响应式处理
+            function handleResize() {
+                // 重新渲染图表以适应新的尺寸
+                if (activeTab === 'advanced') {
+                    setTimeout(() => renderAdvancedChart(), 100);
+                } else if (activeTab === 'departments') {
+                    setTimeout(() => renderDepartmentChart(), 100);
+                }
+            }
 
-            switch (reportType) {
-                case 'revenue':
-                    chartData = {
-                        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-                        datasets: [{ label: '总收入(万元)', data: [15, 18, 13, 20, 25, 30, 28], backgroundColor: '#667eea' }]
+            window.addEventListener('resize', debounce(handleResize, 250));
+
+            // 防抖函数
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
                     };
-                    tableHtml = `<thead><tr><th>日期</th><th>总收入</th><th>同比增长</th></tr></thead>
-                                 <tbody><tr><td>2025-06-09</td><td>¥150,000</td><td>+5%</td></tr><tr><td>2025-06-10</td><td>¥180,000</td><td>+7%</td></tr></tbody>`;
-                    break;
-                case 'task':
-                     chartData = {
-                        labels: ['已完成', '进行中', '已逾期'],
-                        datasets: [{ label: '任务数', data: [23, 18, 6], backgroundColor: ['#28a745', '#ffc107', '#dc3545'] }]
-                    };
-                    tableHtml = `<thead><tr><th>站点</th><th>总任务</th><th>完成率</th></tr></thead>
-                                 <tbody><tr><td>上海</td><td>15</td><td>80%</td></tr><tr><td>北京</td><td>12</td><td>92%</td></tr></tbody>`;
-                    break;
-                default:
-                    chartData = { labels: [], datasets: [] };
-                    tableHtml = '<thead><tr><th>暂无数据</th></tr></thead><tbody><tr><td>请选择有效的报表类型</td></tr></tbody>';
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
             }
-            
-            reportChartInstance = new Chart(ctx, { type: 'bar', data: chartData });
-            table.innerHTML = tableHtml;
-        }
 
-        function backToReportSelection(){
-            document.getElementById('reportPlaceholder').classList.remove('hidden');
-            document.getElementById('reportContent').classList.add('hidden');
-        }
+            // 添加可访问性支持
+            document.querySelectorAll('button, .employee-card').forEach(element => {
+                element.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        element.click();
+                    }
+                });
+            });
 
+            // 主题切换功能（可选）
+            function toggleTheme() {
+                document.body.classList.toggle('dark-theme');
+                localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+            }
+
+            // 恢复主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+
+            // 添加印象分析
+            console.log('🎉 站点人员效率评分看板已加载完成！');
+            console.log('📊 功能特性：');
+            console.log('   - 多维度员工效率分析');
+            console.log('   - 实时数据可视化');
+            console.log('   - 响应式设计');
+            console.log('   - 交互式图表');
+            console.log('   - 移动端优化');
+            console.log('🚀 使用说明：');
+            console.log('   - 数字键1-4快速切换标签页');
+            console.log('   - 移动端支持滑动切换');
+            console.log('   - ESC键关闭模态框');
+            console.log('   - 点击员工卡片查看详情');
+        });
     </script>
 </body>
 </html>
